@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
-<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
-<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<!--[if IE 8]>
+<html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en"> <!--<![endif]-->
 <head>
     <title>测试日报质量平台——登录</title>
 
@@ -27,10 +30,10 @@
     <link rel="stylesheet" href="assets/plugins/line-icons/line-icons.css">
     <link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.min.css">
 
-    <!-- CSS Page Style -->    
-    <link rel="stylesheet" href="assets/css/page_log.css">    
+    <!-- CSS Page Style -->
+    <link rel="stylesheet" href="assets/css/page_log.css">
 
-    <!-- CSS Theme -->    
+    <!-- CSS Theme -->
     <link rel="stylesheet" href="assets/css/blue.css" id="style_color">
 
     <!-- CSS Customization -->
@@ -38,21 +41,37 @@
     <link rel="stylesheet" href="assets/plugins/iview/iview.css">
     <link href="assets/plugins/ionicons/css/ionicons.css" rel="stylesheet">
     <style type="text/css">
-      .btn-u:hover{
-        background: #40E0D0 !important;
-        color: #fff !important;
-      }
+        .btn-u:hover {
+            background: #40E0D0 !important;
+            color: #fff !important;
+        }
+        .check-code {
+            height: 34px;
+            padding: 6px 12px;
+            background-image: none;
+            width: 55%;
+            border: 1px solid #ccc;
+            margin: 0;
+            line-height: 1.42857143;
+            color: #555;
+            font-size: 14px;
+        }
+        .check-code:focus{
+            outline:0;
+            /*box-shadow: none !important;*/
+            border-color: #999;
+        }
     </style>
-</head> 
+</head>
 
 <body>
 
-<!--=== Content Part ===-->    
+<!--=== Content Part ===-->
 <div id="app" class="container">
     <!--Reg Block-->
     <div class="reg-block">
         <div class="reg-block-header">
-            <h2>测试日报质量平台</h2>     
+            <h2>测试日报质量平台</h2>
         </div>
 
         <div class="input-group margin-bottom-20">
@@ -63,14 +82,21 @@
             <span class="input-group-addon">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>
             <input type="password" v-model="passWord" class="form-control" placeholder="Password">
         </div>
+        <div class="input-group margin-bottom-20">
+            <span class="input-group-addon">验&nbsp;&nbsp;证&nbsp;&nbsp;码</span>
+            <input type="checkcode" v-model="checkCode" class="form-control"
+                   style="width: 58%" placeholder="CheckCode">
+            <img id="codeImg" src="api/PTJ/user/validateCode.do" style="margin-left:5px;width:100px;height:33px;"
+                 @click="getCheckImg"></img>
+        </div>
         <hr>
 
         <div class="checkbox">
             <label style="padding-left: 0px;">
                 <Checkbox v-model="autologin" @on-change="autologinFc" style="padding-left: 0px;">下次自动登录</Checkbox>
-            </label>            
+            </label>
         </div>
-                                
+
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <button type="submit" class="btn-u btn-block" @click="userland">登录</button>
@@ -86,88 +112,101 @@
 
 <!-- JS Global Compulsory -->
 <script type="text/javascript" src="assets/js/vue.js"></script>
-<script src="assets/plugins/iview/iview.min.js"></script>           
+<script src="assets/plugins/iview/iview.min.js"></script>
 <script type="text/javascript" src="assets/plugins/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="assets/plugins/jquery/jquery-migrate.min.js"></script>
-<script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script> 
-<!-- JS Implementing Plugins -->           
+<script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<!-- JS Implementing Plugins -->
 <script type="text/javascript" src="assets/plugins/back-to-top.js"></script>
 <script type="text/javascript" src="assets/plugins/backstretch/jquery.backstretch.min.js"></script>
 <!-- JS Customization -->
 <script type="text/javascript" src="assets/js/custom.js"></script>
-<!-- JS Page Level -->           
+<!-- JS Page Level -->
 <script type="text/javascript" src="assets/js/app.js"></script>
 <!--[if lt IE 9]>
-    <script src="assets/plugins/respond.js"></script>
-    <script src="assets/plugins/html5shiv.js"></script>
-    <script src="assets/plugins/placeholder-IE-fixes.js"></script>
+<script src="assets/plugins/respond.js"></script>
+<script src="assets/plugins/html5shiv.js"></script>
+<script src="assets/plugins/placeholder-IE-fixes.js"></script>
 <![endif]-->
 <script type="text/javascript">
-  	new Vue({
-	  el: '#app',
-	  data: {
-	  	autologin: false,
-	    userName: '',
-	    passWord: ''
-	  },
-	  mounted () {
-	  	if (sessionStorage.getItem('autologin', this.autologin) === 'true') {
-	  		this.autologin = true
-	  		this.userName = sessionStorage.getItem('userName', this.userName)
-			this.passWord = sessionStorage.getItem('passWord', this.passWord)
-	  	}
-	  },
-	  methods: {
-	    userland: function () {
-	    	if (this.userName === '' || this.passWord === '') {
-	    		this.$Notice.error({
-                    title: '用户名或密码不能为空',
-                    desc: ''
-                })
-	    	} else {
-	    		let params = {
-	    			username: this.userName,
-	    			password: this.passWord
-	    		}
-	    		let that = this
-		        $.ajax({
-				  type: 'POST',
-				  url: '/api/PTJ/user/login.do',
-				  data: JSON.stringify(params),
-				  contentType: 'text/plain',
-				  success: function(data){
-		            if (data.status === 0) {
-		            	let authority = data.data.authorityid
-		            	sessionStorage.setItem('authorityid', authority)
-		            	that.autologinFc()
-                        sessionStorage.setItem('userId', data.data.id)
-		            	window.location.pathname = 'index.html'
-		            } else {
-                        that.$Notice.error({
-                            title: data.msg,
-                            desc: ''
-                        })
-                    }
-		          },
-		          error: function(){
-		          	console.log('error')
-		          }
-				})
-	    	}
+    new Vue({
+        el: '#app',
+        data: {
+            autologin: false,
+            userName: '',
+            passWord: '',
+            checkCode: ''
         },
-        autologinFc: function () {
-        	if ( this.autologin === true) {
-        		sessionStorage.setItem('userName', this.userName)
-        		sessionStorage.setItem('passWord', this.passWord)
-        		sessionStorage.setItem('autologin', this.autologin)
-        	} else {
-        		sessionStorage.removeItem('userName', this.userName)
-        		sessionStorage.removeItem('passWord', this.passWord)
-        		sessionStorage.removeItem('autologin', this.autologin)
-        	}
+        mounted() {
+            if (sessionStorage.getItem('autologin', this.autologin) === 'true') {
+                this.autologin = true
+                this.userName = sessionStorage.getItem('userName', this.userName)
+                this.passWord = sessionStorage.getItem('passWord', this.passWord)
+            }
+            this.getCheckImg()
+        },
+        methods: {
+            getCheckImg () {
+                $('#codeImg').attr({'src': 'api/PTJ/user/validateCode.do?flag=' + Math.random()})
+            },
+            userland: function () {
+                if (this.userName === '' || this.passWord === '') {
+                    this.$Notice.error({
+                        title: '用户名或密码不能为空',
+                        desc: ''
+                    })
+                } else if (this.checkCode === '') {
+                    this.$Notice.error({
+                        title: '验证码不能为空',
+                        desc: ''
+                    })
+                } else {
+                    let params = {
+                        username: this.userName,
+                        password: this.passWord,
+                        code: this.checkCode
+                    }
+                    let that = this
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/user/login.do',
+                        data: JSON.stringify(params),
+                        contentType: 'text/plain',
+                        success: function (data) {
+                            if (data.status === 0) {
+                                let authority = data.data.authorityid
+                                sessionStorage.setItem('authorityid', authority)
+                                that.autologinFc()
+                                sessionStorage.setItem('userId', data.data.id)
+                                window.location.pathname = 'index.html'
+                            } else {
+                                that.$Notice.error({
+                                    title: data.msg,
+                                    desc: ''
+                                })
+                                that.getCheckImg()
+                            }
+                        },
+                        error: function () {
+                            console.log('error')
+                            that.getCheckImg()
+                        }
+                    })
+                }
+            },
+            autologinFc: function () {
+                if (this.autologin === true) {
+                    sessionStorage.setItem('userName', this.userName)
+                    sessionStorage.setItem('passWord', this.passWord)
+                    sessionStorage.setItem('autologin', this.autologin)
+                } else {
+                    sessionStorage.removeItem('userName', this.userName)
+                    sessionStorage.removeItem('passWord', this.passWord)
+                    sessionStorage.removeItem('autologin', this.autologin)
+                }
+            }
         }
-	  }
-	})
-  </script>
+    })
+</script>
 </body>
 </html> 
