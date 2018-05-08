@@ -35,7 +35,7 @@
 
         .testType {
             border: 2px solid #ccc;
-            padding: 5px 10px;
+            padding: 8px 13px;
             margin-right: 20px;
             cursor: pointer;
         }
@@ -43,7 +43,7 @@
         .selected {
             cursor: pointer;
             border: 2px solid #2d8cf0;
-            padding: 5px 10px;
+            padding: 8px 13px;
             color: #2d8cf0;
             margin-right: 20px;
         }
@@ -87,7 +87,7 @@
                     </i-select>
                     </span>
                 </div>
-                <i-button type="primary" style="margin-left: 20px;" icon="plus" @click="modal2 = true">新建项目</i-button>
+                <i-button v-show="showNewProject" type="primary" style="margin-left: 20px;" icon="plus" @click="modal2 = true">新建项目</i-button>
 
                 <!-- <span>项目大群 <i-select v-model="searchGroup" style="width:150px;margin-right: 20px;margin-left: 5px;" @on-change="ChangeGroup">
                     <i-option v-for="item in groupList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
@@ -98,8 +98,7 @@
             </div>
             <div style="text-align: center;">
                 <i-col span="24" style="margin-top:20px;">
-                    <Page :total="pagetotal" :page-size="pageSize" :current="currentPage"
-                          @on-change='changePage'></Page>
+                    <Page :total="pagetotal" :page-size="pageSize" :current="currentPage" @on-change='changePage'></Page>
                 </i-col>
             </div>
         </div>
@@ -195,7 +194,7 @@
             </form-item>
             <form-item label="测试负责人">
                 <i-select transfer v-model="tester" style="width:150px;margin-left: 5px;">
-                    <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
+                    <i-option v-for="item in addTesterList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
                 </i-select>
             </form-item>
             <form-item label="参与人员">
@@ -226,6 +225,7 @@
                 selectCapacity: false,
                 selectCode: false,
                 selectSecurity: false,
+                showNewProject: false,
                 istesttype0: 'ghost',
                 istesttype1: 'primary',
                 detailproinfo: {
@@ -655,6 +655,7 @@
             let getlistdefineTime = sessionStorage.getItem('listdefineTime')
             let getlistgroup = sessionStorage.getItem('listgroup')
             let gettester = sessionStorage.getItem('tester')
+            let getauthorityid = sessionStorage.getItem('authorityid')
             if (getallTimelist != null) {
                 getallTimelist = JSON.parse(getallTimelist)
                 this.timeList = getallTimelist
@@ -673,6 +674,9 @@
             }
             if (gettester != null) {
                 this.searchTester = gettester
+            }
+            if (getauthorityid === '1') {
+                this.showNewProject = true
             }
             this.userName = sessionStorage.getItem('userName')
             this.getNowDate()
@@ -695,6 +699,7 @@
             promis.then(function (data) {
                 if (data.status === 0) {
                     that.testerList = that.testerList.concat(data.data)
+                    that.addTesterList = data.data
                     console.log(that.testerList)
                     that.changePage(1)
                 }
