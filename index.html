@@ -69,22 +69,26 @@
                 <h1 style="color: #666666;margin-top: 20px;">项目列表</h1>
                 <hr style="border:1px solid #CDC9C9;margin-top: 10px;"/>
             </div>
-            <div style="margin-top: 20px;">
-                <i-select v-model="searchTime.blurdate" style="width:120px;margin-right: 20px;" @on-change="changeTime">
-                    <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
-                </i-select>
-                <date-picker v-model="searchTime.detail" v-if="isuserdefined" type="daterange" @on-change="ChangeDate"
-                             @on-ok="confirmDate" @on-clear="ClearDate" confirm placement="bottom-end"
-                             placeholder="请选择开始和结束时间" style="width: 220px;margin-right: 20px;"></date-picker>
-                <span>项目 <i-select v-model="searchProject" style="width:250px;margin-right: 20px;margin-left: 5px;"
-                                   filterable @on-change="ChangeProject">
+            <div style="margin-top: 20px; display: flex; justify-content: space-between">
+                <div>
+                    <i-select v-model="searchTime.blurdate" style="width:120px;margin-right: 20px;"
+                              @on-change="changeTime">
+                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
+                    </i-select>
+                    <date-picker v-model="searchTime.detail" v-if="isuserdefined" type="daterange"
+                                 @on-change="ChangeDate"
+                                 @on-ok="confirmDate" @on-clear="ClearDate" confirm placement="bottom-end"
+                                 placeholder="请选择开始和结束时间" style="width: 220px;margin-right: 20px;"></date-picker>
+                    <span>项目 <i-select v-model="searchProject" style="width:250px;margin-right: 20px;margin-left: 5px;" filterable @on-change="ChangeProject">
 		        <i-option v-for="item in projectList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
 		    </i-select></span>
-                <span>测试负责人 <i-select v-model="searchTester" style="width:150px;margin-left: 5px;"
-                                      @on-change="ChangeTester">
-		        <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
-		    </i-select></span>
-                <i-button type="primary" style="margin-left: 20px" icon="plus" @click="modal2 = true">新建项目</i-button>
+                    <span>测试负责人 <i-select v-model="searchTester" style="width:150px;margin-left: 5px;" @on-change="ChangeTester">
+                        <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
+                    </i-select>
+                    </span>
+                </div>
+                <i-button type="primary" style="margin-left: 20px;" icon="plus" @click="modal2 = true">新建项目</i-button>
+
                 <!-- <span>项目大群 <i-select v-model="searchGroup" style="width:150px;margin-right: 20px;margin-left: 5px;" @on-change="ChangeGroup">
                     <i-option v-for="item in groupList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                 </i-select></span> -->
@@ -186,11 +190,13 @@
             <form-item label="测试类型">
                 <span :class="selectFunction?'selected':'testType'" @click="selectTestType('function')">功能测试</span>
                 <span :class="selectCapacity?'selected':'testType'" @click="selectTestType('capacity')">性能测试</span>
-                <span :class="selectCode?'selected':'testType'"  @click="selectTestType('code')">代码测试</span>
-                <span :class="selectSecurity?'selected':'testType'"  @click="selectTestType('security')">安全测试</span>
+                <span :class="selectCode?'selected':'testType'" @click="selectTestType('code')">代码测试</span>
+                <span :class="selectSecurity?'selected':'testType'" @click="selectTestType('security')">安全测试</span>
             </form-item>
             <form-item label="测试负责人">
-                <i-input style="width: 400px"></i-input>
+                <i-select transfer v-model="tester" style="width:150px;margin-left: 5px;">
+                    <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
+                </i-select>
             </form-item>
             <form-item label="参与人员">
                 <i-input style="width: 400px"></i-input>
@@ -212,6 +218,7 @@
         data() {
             return {
                 checkReportDate: '',
+                tester: '',
                 baselineshow: [],
                 selectedType: [],
                 testrequest: false,
@@ -229,6 +236,7 @@
                     members: ''
                 },
                 testApplyList: [],
+                addTesterList: [],
                 pagetotal: 1,
                 pageSize: 10,
                 currentPage: 1,
@@ -453,7 +461,6 @@
                         key: 'action',
                         align: 'center',
                         width: 250,
-                        align: 'center',
                         render: (h, params) => {
                             let authorityid = sessionStorage.getItem('authorityid')
                             if (authorityid === '1') {
@@ -519,47 +526,111 @@
                                     }, '质量看板')
                                 ]);
                             } else {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px',
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'checkreport.html'
+                                // if (params.row.iswritting === '1') {
+                                //     return h('div', [
+                                //         h('Button', {
+                                //             props: {
+                                //                 type: 'primary',
+                                //                 size: 'small'
+                                //             },
+                                //             style: {
+                                //                 marginRight: '5px',
+                                //                 fontSize: '12px'
+                                //             },
+                                //             on: {
+                                //                 click: () => {
+                                //                     let that = this
+                                //                     let id = params.row.projectid
+                                //                     sessionStorage.setItem('projectid', id)
+                                //                     sessionStorage.setItem('projectname', params.row.proname)
+                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                //                     window.location.pathname = 'report.html'
+                                //                 }
+                                //             }
+                                //         }, '填写日报'),
+                                //         h('Button', {
+                                //             props: {
+                                //                 type: 'primary',
+                                //                 size: 'small'
+                                //             },
+                                //             style: {
+                                //                 marginRight: '5px',
+                                //                 fontSize: '12px'
+                                //             },
+                                //             on: {
+                                //                 click: () => {
+                                //                     let that = this
+                                //                     let id = params.row.projectid
+                                //                     sessionStorage.setItem('projectid', id)
+                                //                     sessionStorage.setItem('projectname', params.row.proname)
+                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                //                     window.location.pathname = 'checkreport.html'
+                                //                 }
+                                //             }
+                                //         }, '查看日报'),
+                                //         h('Button', {
+                                //             props: {
+                                //                 type: 'primary',
+                                //                 size: 'small'
+                                //             },
+                                //             style: {
+                                //                 fontSize: '12px'
+                                //             },
+                                //             on: {
+                                //                 click: () => {
+                                //                     let that = this
+                                //                     let id = params.row.projectid
+                                //                     sessionStorage.setItem('projectid', id)
+                                //                     sessionStorage.setItem('projectname', params.row.proname)
+                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                //                     window.location.pathname = 'board.html'
+                                //                 }
+                                //             }
+                                //         }, '质量看板')
+                                //     ]);
+                                // } else {
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px',
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'checkreport.html'
+                                                }
                                             }
-                                        }
-                                    }, '查看日报'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'board.html'
+                                        }, '查看日报'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'board.html'
+                                                }
                                             }
-                                        }
-                                    }, '质量看板')
-                                ]);
+                                        }, '质量看板')
+                                    ]);
+                                // }
                             }
                         }
                     }
@@ -635,7 +706,7 @@
             selectTestType(type) {
                 if (type === 'function') {
                     let index = this.selectedType.indexOf(type)
-                    if ( index === -1) {
+                    if (index === -1) {
                         this.selectFunction = true
                         this.selectedType.push(type)
                     } else {
@@ -645,7 +716,7 @@
                 }
                 if (type === 'capacity') {
                     let index = this.selectedType.indexOf(type)
-                    if ( index === -1) {
+                    if (index === -1) {
                         this.selectCapacity = true
                         this.selectedType.push(type)
                     } else {
@@ -655,7 +726,7 @@
                 }
                 if (type === 'code') {
                     let index = this.selectedType.indexOf(type)
-                    if ( index === -1) {
+                    if (index === -1) {
                         this.selectCode = true
                         this.selectedType.push(type)
                     } else {
@@ -665,7 +736,7 @@
                 }
                 if (type === 'security') {
                     let index = this.selectedType.indexOf(type)
-                    if ( index === -1) {
+                    if (index === -1) {
                         this.selectSecurity = true
                         this.selectedType.push(type)
                     } else {
@@ -861,6 +932,7 @@
                     success: function (data) {
                         if (data.status === 0) {
                             that.testerList = that.testerList.concat(data.data)
+                            that.addTesterList = data.data
                             console.log(that.testerList)
                         } else if (data.status === 10) {
                             that.$Notice.warning({
