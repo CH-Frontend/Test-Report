@@ -64,7 +64,7 @@
             </div>
         </div><!--/breadcrumbs-->
         <!--=== End Breadcrumbs ===-->
-        <div style="width: 80%;margin-left: 10%;">
+        <div style="width: 90%; margin: 0 auto">
             <div>
                 <h1 style="color: #666666;margin-top: 20px;">项目列表</h1>
                 <hr style="border:1px solid #CDC9C9;margin-top: 10px;"/>
@@ -179,12 +179,12 @@
             v-model="modal2"
             title="新建项目"
             @on-cancel="cancel2">
-        <i-form :label-width="80">
+        <i-form :label-width="80" :model="newProjectFormDic">
             <form-item label="项目名称">
-                <i-input style="width: 400px"></i-input>
+                <i-input style="width: 400px" v-model="newProjectFormDic.projectName"></i-input>
             </form-item>
             <form-item label="项目经理">
-                <i-input style="width: 400px"></i-input>
+                <i-input style="width: 400px" v-model="newProjectFormDic.projectManager"></i-input>
             </form-item>
             <form-item label="测试类型">
                 <span :class="selectFunction?'selected':'testType'" @click="selectTestType('function')">功能测试</span>
@@ -193,12 +193,12 @@
                 <span :class="selectSecurity?'selected':'testType'" @click="selectTestType('security')">安全测试</span>
             </form-item>
             <form-item label="测试负责人">
-                <i-select transfer v-model="tester" style="width:150px;margin-left: 5px;">
+                <i-select transfer v-model="newProjectFormDic.tester" style="width:150px;margin-left: 5px;">
                     <i-option v-for="item in addTesterList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
                 </i-select>
             </form-item>
             <form-item label="参与人员">
-                <i-input style="width: 400px"></i-input>
+                <i-input style="width: 400px" v-model="newProjectFormDic.members"></i-input>
             </form-item>
         </i-form>
         <div slot="footer">
@@ -233,6 +233,13 @@
                     projectCode: '',
                     projectManager: '',
                     groupName: '',
+                    members: ''
+                },
+                newProjectFormDic: {
+                    projectName: '',
+                    projectManager: '',
+                    testType: [],
+                    tester: '',
                     members: ''
                 },
                 testApplyList: [],
@@ -362,13 +369,13 @@
                         title: '序号',
                         key: 'number',
                         align: 'center',
-                        width: 70
+                        width: 60
                     },
                     {
                         title: '项目名称',
                         key: 'proname',
                         align: 'center',
-                        width: 200,
+                        // width: 200,
                         render: (h, params) => {
                             let that = this
                             return h('div', [
@@ -442,7 +449,8 @@
                     {
                         title: '归属大项目群',
                         key: 'group',
-                        align: 'center'
+                        align: 'center',
+                        width: 110
                     },
                     {
                         title: '项目经理',
@@ -455,6 +463,45 @@
                         key: 'tester',
                         align: 'center',
                         width: 100
+                    },
+                    {
+                        title: '关联PMIS',
+                        key: 'connect',
+                        align: 'center',
+                        width: 100,
+                        render: (h, params) => {
+                            let authorityid = sessionStorage.getItem('authorityid')
+                            if (authorityid === '1') {
+                                return h('div', [
+                                    h('i-button', {
+                                        props: {
+                                            type: 'text',
+                                            size: 'small'
+                                        },
+                                        on: {
+                                            click () {
+                                                this.$Modal()
+                                            }
+                                        }
+                                    }, '关联')
+                                ])
+                            } else {
+                                return h('div', [
+                                    h('i-button', {
+                                        props: {
+                                            type: 'text',
+                                            size: 'small',
+                                            disabled: 'true'
+                                        },
+                                        on: {
+                                            click () {
+
+                                            }
+                                        }
+                                    }, '关联')
+                                ])
+                            }
+                        }
                     },
                     {
                         title: '操作',
@@ -712,46 +759,46 @@
         methods: {
             selectTestType(type) {
                 if (type === 'function') {
-                    let index = this.selectedType.indexOf(type)
+                    let index = this.newProjectFormDic.testType.indexOf(type)
                     if (index === -1) {
                         this.selectFunction = true
-                        this.selectedType.push(type)
+                        this.newProjectFormDic.testType.push(type)
                     } else {
                         this.selectFunction = false
-                        this.selectedType.splice(index, 1)
+                        this.newProjectFormDic.testType.splice(index, 1)
                     }
                 }
                 if (type === 'capacity') {
-                    let index = this.selectedType.indexOf(type)
+                    let index = this.newProjectFormDic.testType.indexOf(type)
                     if (index === -1) {
-                        this.selectCapacity = true
-                        this.selectedType.push(type)
+                        this.selectFunction = true
+                        this.newProjectFormDic.testType.push(type)
                     } else {
-                        this.selectCapacity = false
-                        this.selectedType.splice(index, 1)
+                        this.selectFunction = false
+                        this.newProjectFormDic.testType.splice(index, 1)
                     }
                 }
                 if (type === 'code') {
-                    let index = this.selectedType.indexOf(type)
+                    let index = this.newProjectFormDic.testType.indexOf(type)
                     if (index === -1) {
-                        this.selectCode = true
-                        this.selectedType.push(type)
+                        this.selectFunction = true
+                        this.newProjectFormDic.testType.push(type)
                     } else {
-                        this.selectCode = false
-                        this.selectedType.splice(index, 1)
+                        this.selectFunction = false
+                        this.newProjectFormDic.testType.splice(index, 1)
                     }
                 }
                 if (type === 'security') {
-                    let index = this.selectedType.indexOf(type)
+                    let index = this.newProjectFormDic.testType.indexOf(type)
                     if (index === -1) {
-                        this.selectSecurity = true
-                        this.selectedType.push(type)
+                        this.selectFunction = true
+                        this.newProjectFormDic.testType.push(type)
                     } else {
-                        this.selectSecurity = false
-                        this.selectedType.splice(index, 1)
+                        this.selectFunction = false
+                        this.newProjectFormDic.testType.splice(index, 1)
                     }
                 }
-                console.log(this.selectedType)
+                // console.log(this.selectedType)
             },
             // newProject() {
             //     this.modal2 = true
@@ -873,7 +920,13 @@
                 this.selectFunction = false
                 this.selectCode = false
                 this.selectSecurity = false
-                this.selectedType = []
+                this.newProjectFormDic = {
+                    projectName: '',
+                    projectManager: '',
+                    testType: [],
+                    tester: '',
+                    members: ''
+                }
                 // this.testrequest = false
                 // this.baselineshow = []
             },
@@ -891,7 +944,13 @@
                 this.selectFunction = false
                 this.selectCode = false
                 this.selectSecurity = false
-                this.selectedType = []
+                this.newProjectFormDic = {
+                    projectName: '',
+                        projectManager: '',
+                        testType: [],
+                        tester: '',
+                        members: ''
+                }
                 // this.testrequest = false
                 // this.baselineshow = []
             },
