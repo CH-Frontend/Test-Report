@@ -73,8 +73,7 @@
                 <div>
                     <i-select v-model="searchTime.blurdate" style="width:120px;margin-right: 20px;"
                               @on-change="changeTime">
-                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}
-                        </i-option>
+                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
                     </i-select>
                     <date-picker v-model="searchTime.detail" v-if="isuserdefined" type="daterange"
                                  @on-change="ChangeDate"
@@ -90,9 +89,8 @@
                     </i-select>
                     </span>
                 </div>
-                <i-button v-show="showNewProject" type="primary" style="margin-left: 20px;" icon="plus"
-                          @click="modal2 = true">新建项目
-                </i-button>
+                <!--<i-button v-show="showNewProject" type="primary" style="margin-left: 20px;" icon="plus"-->
+                          <!--@click="modal2 = true">新建项目</i-button>-->
 
                 <!-- <span>项目大群 <i-select v-model="searchGroup" style="width:150px;margin-right: 20px;margin-left: 5px;" @on-change="ChangeGroup">
                     <i-option v-for="item in groupList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
@@ -483,49 +481,50 @@
                         align: 'center',
                         width: 100
                     },
-                    {
-                        title: '关联PMIS',
-                        key: 'connect',
-                        align: 'center',
-                        width: 100,
-                        render: (h, params) => {
-                            let that = this
-                            let authorityid = sessionStorage.getItem('authorityid')
-                            if (authorityid === '1') {
-                                return h('a', {
-                                    style: {
-                                        fontWeight: 500
-                                    },
-                                    on: {
-                                        click() {
-                                            that.modal3 = true
-                                        }
-                                    }
-                                }, '关联')
-                            } else {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'text',
-                                            size: 'small',
-                                            disabled: 'true'
-                                        },
-                                        on: {
-                                            click() {
-
-                                            }
-                                        }
-                                    }, '关联')
-                                ])
-                            }
-                        }
-                    },
+                    // {
+                    //     title: '关联PMIS',
+                    //     key: 'connect',
+                    //     align: 'center',
+                    //     width: 100,
+                    //     render: (h, params) => {
+                    //         let that = this
+                    //         let authorityid = sessionStorage.getItem('authorityid')
+                    //         if (authorityid === '1') {
+                    //             return h('a', {
+                    //                 style: {
+                    //                     fontWeight: 500
+                    //                 },
+                    //                 on: {
+                    //                     click() {
+                    //                         that.modal3 = true
+                    //                     }
+                    //                 }
+                    //             }, '关联')
+                    //         } else {
+                    //             return h('div', [
+                    //                 h('Button', {
+                    //                     props: {
+                    //                         type: 'text',
+                    //                         size: 'small',
+                    //                         disabled: 'true'
+                    //                     },
+                    //                     on: {
+                    //                         click() {
+                    //
+                    //                         }
+                    //                     }
+                    //                 }, '关联')
+                    //             ])
+                    //         }
+                    //     }
+                    // },
                     {
                         title: '操作',
                         key: 'action',
                         align: 'center',
                         width: 250,
                         render: (h, params) => {
+                            // console.log(params.row)
                             let authorityid = sessionStorage.getItem('authorityid')
                             if (authorityid === '1') {
                                 return h('div', [
@@ -590,111 +589,111 @@
                                     }, '质量看板')
                                 ]);
                             } else {
-                                // if (params.row.iswritting === '1') {
-                                //     return h('div', [
-                                //         h('Button', {
-                                //             props: {
-                                //                 type: 'primary',
-                                //                 size: 'small'
-                                //             },
-                                //             style: {
-                                //                 marginRight: '5px',
-                                //                 fontSize: '12px'
-                                //             },
-                                //             on: {
-                                //                 click: () => {
-                                //                     let that = this
-                                //                     let id = params.row.projectid
-                                //                     sessionStorage.setItem('projectid', id)
-                                //                     sessionStorage.setItem('projectname', params.row.proname)
-                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                //                     window.location.pathname = 'report.html'
-                                //                 }
-                                //             }
-                                //         }, '填写日报'),
-                                //         h('Button', {
-                                //             props: {
-                                //                 type: 'primary',
-                                //                 size: 'small'
-                                //             },
-                                //             style: {
-                                //                 marginRight: '5px',
-                                //                 fontSize: '12px'
-                                //             },
-                                //             on: {
-                                //                 click: () => {
-                                //                     let that = this
-                                //                     let id = params.row.projectid
-                                //                     sessionStorage.setItem('projectid', id)
-                                //                     sessionStorage.setItem('projectname', params.row.proname)
-                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                //                     window.location.pathname = 'checkreport.html'
-                                //                 }
-                                //             }
-                                //         }, '查看日报'),
-                                //         h('Button', {
-                                //             props: {
-                                //                 type: 'primary',
-                                //                 size: 'small'
-                                //             },
-                                //             style: {
-                                //                 fontSize: '12px'
-                                //             },
-                                //             on: {
-                                //                 click: () => {
-                                //                     let that = this
-                                //                     let id = params.row.projectid
-                                //                     sessionStorage.setItem('projectid', id)
-                                //                     sessionStorage.setItem('projectname', params.row.proname)
-                                //                     sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                //                     window.location.pathname = 'board.html'
-                                //                 }
-                                //             }
-                                //         }, '质量看板')
-                                //     ]);
-                                // } else {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px',
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'checkreport.html'
+                                if (params.row.isWrite === 1) {
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px',
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'report.html'
+                                                }
                                             }
-                                        }
-                                    }, '查看日报'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'board.html'
+                                        }, '填写日报'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px',
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'checkreport.html'
+                                                }
                                             }
-                                        }
-                                    }, '质量看板')
-                                ]);
-                                // }
+                                        }, '查看日报'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'board.html'
+                                                }
+                                            }
+                                        }, '质量看板')
+                                    ]);
+                                } else if (params.row.isWrite === 0) {
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px',
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'checkreport.html'
+                                                }
+                                            }
+                                        }, '查看日报'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'board.html'
+                                                }
+                                            }
+                                        }, '质量看板')
+                                    ]);
+                                }
                             }
                         }
                     }
@@ -795,7 +794,7 @@
                 if (data.status === 0) {
                     that.testerList = that.testerList.concat(data.data)
                     that.addTesterList = data.data
-                    console.log(that.testerList)
+                    // console.log(that.testerList)
                     that.changePage(1)
                 }
             }).catch(function (err) {
@@ -851,9 +850,6 @@
                 }
                 // console.log(this.selectedType)
             },
-            // newProject() {
-            //     this.modal2 = true
-            // },
             timestampToTime(timestamp) {
                 var date = new Date(timestamp * 1000)
                 Y = date.getFullYear() + '-'
@@ -1158,6 +1154,7 @@
                 let projectName0 = null
                 let testerselected = this.testerList.filter(item => item.cn === this.searchTester)
                 let testid = null
+                // console.log(this.testerList)
                 if (testerselected[0] !== undefined) {
                     testid = testerselected[0].id
                 }
@@ -1216,7 +1213,8 @@
                                     group: '',
                                     promanager: '',
                                     tester: '',
-                                    projectid: ''
+                                    projectid: '',
+                                    isWrite: 0
                                 }
                                 for (let j = 0; j < that.grouplistid.length; j++) {
                                     if (data.data.list[i].groupId === that.grouplistid[j].id) {
@@ -1231,6 +1229,7 @@
                                 datalist.promanager = data.data.list[i].managerName
                                 datalist.tester = data.data.list[i].cn
                                 datalist.projectid = data.data.list[i].id
+                                datalist.isWrite = data.data.list[i].isWrite
 
                                 that.data0.push(datalist)
                             }
