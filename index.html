@@ -73,21 +73,26 @@
                 <div>
                     <i-select v-model="searchTime.blurdate" style="width:120px;margin-right: 20px;"
                               @on-change="changeTime">
-                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
+                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}
+                        </i-option>
                     </i-select>
                     <date-picker v-model="searchTime.detail" v-if="isuserdefined" type="daterange"
                                  @on-change="ChangeDate"
                                  @on-ok="confirmDate" @on-clear="ClearDate" confirm placement="bottom-end"
                                  placeholder="请选择开始和结束时间" style="width: 220px;margin-right: 20px;"></date-picker>
-                    <span>项目 <i-select v-model="searchProject" style="width:250px;margin-right: 20px;margin-left: 5px;" filterable @on-change="ChangeProject">
+                    <span>项目 <i-select v-model="searchProject" style="width:250px;margin-right: 20px;margin-left: 5px;"
+                                       filterable @on-change="ChangeProject">
 		        <i-option v-for="item in projectList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
 		    </i-select></span>
-                    <span>测试负责人 <i-select v-model="searchTester" style="width:150px;margin-left: 5px;" @on-change="ChangeTester">
+                    <span>测试负责人 <i-select v-model="searchTester" style="width:150px;margin-left: 5px;"
+                                          @on-change="ChangeTester">
                         <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
                     </i-select>
                     </span>
                 </div>
-                <i-button v-show="showNewProject" type="primary" style="margin-left: 20px;" icon="plus" @click="modal2 = true">新建项目</i-button>
+                <i-button v-show="showNewProject" type="primary" style="margin-left: 20px;" icon="plus"
+                          @click="modal2 = true">新建项目
+                </i-button>
 
                 <!-- <span>项目大群 <i-select v-model="searchGroup" style="width:150px;margin-right: 20px;margin-left: 5px;" @on-change="ChangeGroup">
                     <i-option v-for="item in groupList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
@@ -98,7 +103,8 @@
             </div>
             <div style="text-align: center;">
                 <i-col span="24" style="margin-top:20px;">
-                    <Page :total="pagetotal" :page-size="pageSize" :current="currentPage" @on-change='changePage'></Page>
+                    <Page :total="pagetotal" :page-size="pageSize" :current="currentPage"
+                          @on-change='changePage'></Page>
                 </i-col>
             </div>
         </div>
@@ -205,6 +211,18 @@
             <i-button type="primary" @click="ok2">确定</i-button>
         </div>
     </Modal>
+    <Modal
+            v-model="modal3"
+            title="关联PMIS"
+            width="700"
+            @on-cancel="cancel3">
+        <div style="margin-bottom: 10px; font-size: 14px">请选择关联项目:</div>
+        <i-table ref="connectPMIS" highlight-row border :columns="columns1" :data="data1"
+                 @on-current-change="selectTable"></i-table>
+        <div slot="footer">
+            <i-button type="primary" @click="ok3">确认关联</i-button>
+        </div>
+    </Modal>
 </div>
 <script type="text/javascript" src="assets/js/vue.js"></script>
 <script src="assets/plugins/iview/iview.min.js"></script>
@@ -252,6 +270,7 @@
                 modal0: false,
                 modal1: false,
                 modal2: false,
+                modal3: false,
                 isuserdefined: false,
                 searchTime: {
                     blurdate: 1,
@@ -470,31 +489,29 @@
                         align: 'center',
                         width: 100,
                         render: (h, params) => {
+                            let that = this
                             let authorityid = sessionStorage.getItem('authorityid')
                             if (authorityid === '1') {
-                                return h('div', [
-                                    h('i-button', {
-                                        props: {
-                                            type: 'text',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click () {
-                                                this.$Modal()
-                                            }
+                                return h('a', {
+                                    style: {
+                                        fontWeight: 500
+                                    },
+                                    on: {
+                                        click() {
+                                            that.modal3 = true
                                         }
-                                    }, '关联')
-                                ])
+                                    }
+                                }, '关联')
                             } else {
                                 return h('div', [
-                                    h('i-button', {
+                                    h('Button', {
                                         props: {
                                             type: 'text',
                                             size: 'small',
                                             disabled: 'true'
                                         },
                                         on: {
-                                            click () {
+                                            click() {
 
                                             }
                                         }
@@ -636,53 +653,82 @@
                                 //         }, '质量看板')
                                 //     ]);
                                 // } else {
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'primary',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                marginRight: '5px',
-                                                fontSize: '12px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let that = this
-                                                    let id = params.row.projectid
-                                                    sessionStorage.setItem('projectid', id)
-                                                    sessionStorage.setItem('projectname', params.row.proname)
-                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                    window.location.pathname = 'checkreport.html'
-                                                }
+                                return h('div', [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px',
+                                            fontSize: '12px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                let that = this
+                                                let id = params.row.projectid
+                                                sessionStorage.setItem('projectid', id)
+                                                sessionStorage.setItem('projectname', params.row.proname)
+                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                window.location.pathname = 'checkreport.html'
                                             }
-                                        }, '查看日报'),
-                                        h('Button', {
-                                            props: {
-                                                type: 'primary',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                fontSize: '12px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let that = this
-                                                    let id = params.row.projectid
-                                                    sessionStorage.setItem('projectid', id)
-                                                    sessionStorage.setItem('projectname', params.row.proname)
-                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                    window.location.pathname = 'board.html'
-                                                }
+                                        }
+                                    }, '查看日报'),
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            fontSize: '12px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                let that = this
+                                                let id = params.row.projectid
+                                                sessionStorage.setItem('projectid', id)
+                                                sessionStorage.setItem('projectname', params.row.proname)
+                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                window.location.pathname = 'board.html'
                                             }
-                                        }, '质量看板')
-                                    ]);
+                                        }
+                                    }, '质量看板')
+                                ]);
                                 // }
                             }
                         }
                     }
                 ],
-                data0: []
+                data0: [],
+                data1: [
+                    {
+                        projectName: '项目1',
+                        projectNumber: '123'
+                    },
+                    {
+                        projectName: '项目2',
+                        projectNumber: '1234'
+                    }
+                ],
+                columns1: [
+                    {
+                        title: '序号',
+                        type: 'index',
+                        width: 70,
+                        align: 'center'
+                    },
+                    {
+                        title: '项目名称',
+                        key: 'projectName',
+                        align: 'center'
+                    },
+                    {
+                        title: '项目编号',
+                        key: 'projectNumber',
+                        align: 'center'
+                    }
+                ],
+                selectedProject: ''
             }
         },
         created() {
@@ -757,6 +803,11 @@
             });
         },
         methods: {
+            selectTable(current) {
+                if (current) {
+                    this.selectedProject = current.projectName
+                }
+            },
             selectTestType(type) {
                 if (type === 'function') {
                     let index = this.newProjectFormDic.testType.indexOf(type)
@@ -886,7 +937,7 @@
                 sessionStorage.setItem('listgroup', this.searchGroup)
             },
             ChangeTester() {
-                if (this.searchTester != '全部' && this.searchTime.blurdate === '我负责的项目') {
+                if (this.searchTester !== '全部' && this.searchTime.blurdate === '我负责的项目') {
                     this.searchTime.blurdate = '全部'
                 }
                 sessionStorage.setItem('tester', this.searchTester)
@@ -930,6 +981,20 @@
                 // this.testrequest = false
                 // this.baselineshow = []
             },
+            ok3() {
+
+                if (this.selectedProject === '') {
+                    this.$Notice.warning({
+                        title: '警告',
+                        desc: '请选择关联项目'
+                    })
+                    // this.modal3 = true
+                } else {
+                    this.modal3 = false
+                }
+                this.selectedProject = ''
+                this.$refs['connectPMIS'].clearCurrentRow()
+            },
             cancel() {
                 // this.$Message.info('Clicked cancel')
             },
@@ -946,13 +1011,18 @@
                 this.selectSecurity = false
                 this.newProjectFormDic = {
                     projectName: '',
-                        projectManager: '',
-                        testType: [],
-                        tester: '',
-                        members: ''
+                    projectManager: '',
+                    testType: [],
+                    tester: '',
+                    members: ''
                 }
                 // this.testrequest = false
                 // this.baselineshow = []
+            },
+            cancel3() {
+                this.modal3 = false
+                this.selectedProject = ''
+                this.$refs['connectPMIS'].clearCurrentRow()
             },
             userout: function () {
                 $.ajax({
@@ -982,7 +1052,7 @@
                 })
             },
             ChangeProject() {
-                if (this.searchProject == '') {
+                if (this.searchProject === '') {
                     this.searchProject = '全部'
                 }
                 sessionStorage.setItem('listitem', this.searchProject)
@@ -1088,7 +1158,7 @@
                 let projectName0 = null
                 let testerselected = this.testerList.filter(item => item.cn === this.searchTester)
                 let testid = null
-                if (testerselected[0] != undefined) {
+                if (testerselected[0] !== undefined) {
                     testid = testerselected[0].id
                 }
                 this.currentPage = currentPage
@@ -1179,7 +1249,7 @@
                                         label: '我负责的项目'
                                     }
                                 ]
-                                if (data.data.list.length == 0) {
+                                if (data.data.list.length === 0) {
                                     that.searchTime.blurdate = sessionStorage.getItem('checkReportDate')
                                     let addtimelist = {
                                         value: '',
