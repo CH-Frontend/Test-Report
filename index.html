@@ -47,6 +47,10 @@
             color: #2d8cf0;
             margin-right: 20px;
         }
+
+        .row {
+            margin: 0  0 10px 0;
+        }
     </style>
 </head>
 
@@ -73,7 +77,8 @@
                 <div>
                     <i-select v-model="searchTime.blurdate" style="width:120px;margin-right: 20px;"
                               @on-change="changeTime">
-                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
+                        <i-option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}
+                        </i-option>
                     </i-select>
                     <date-picker v-model="searchTime.detail" v-if="isuserdefined" type="daterange"
                                  @on-change="ChangeDate"
@@ -121,23 +126,36 @@
             width="700"
             @on-ok="ok1"
             @on-cancel="cancel1">
-        <p style="font-size: 14px;font-weight: bolder;">项目名称：<span style="font-weight: normal;">{{detailproinfo.projectName}}</span>
-        </p>
-        <div>
+        <div class="row">
+            <p style="font-size: 14px;font-weight: bolder;">项目名称：<span style="font-weight: normal;">{{detailproinfo.projectName}}</span>
+            </p>
+        </div>
+        <div class="row">
             <p style="font-size: 14px;font-weight: bolder;">项目信息：</p>
-            <i-row>
-                <i-col span="12">
+            <div style="display: flex; background: #eee; padding: 5px 10px; margin: 5px 0">
+                <div style="flex: 1">
                     <p>项目编号：{{detailproinfo.projectCode}}</p>
                     <p>所属大项目群：{{detailproinfo.groupName}}</p>
-                </i-col>
-                <i-col span="12">
+                </div>
+                <div style="flex: 1">
                     <p>项目经理：{{detailproinfo.projectManager}}</p>
                     <p style="color: transparent;">.</p>
-                </i-col>
-            </i-row>
-            <p>参与人员：{{(detailproinfo.members.slice(1,detailproinfo.members.length-1)).replace(/\"/g, "")}}</p>
+                </div>
+            </div>
+
         </div>
-        <div>
+        <div class="row">
+            <span style="font-size: 14px;font-weight: bolder;">测试负责人：</span>
+            <i-select transfer :disabled="disabled" v-model="detailproinfo.tester"
+                      style="width:150px;margin-left: 5px;">
+                <i-option v-for="item in TesterList" :value="item.value" :key="item.label">{{ item.label }}
+                </i-option>
+            </i-select>
+        </div>
+        <div class="row">
+            <span style="font-size: 14px;font-weight: bolder;">参与人员：</span><span>{{(detailproinfo.members.slice(1,detailproinfo.members.length-1)).replace(/\"/g, "")}}</span>
+        </div>
+        <div class="row">
             <p style="font-size: 14px;font-weight: bolder;">测试申请单：
                 <i-button @click="testrequest = !testrequest" size="small" style="" shape="circle"
                           icon="plus-round"></i-button>
@@ -246,6 +264,7 @@
                 selectCode: false,
                 selectSecurity: false,
                 showNewProject: false,
+                disabled: false,
                 isFunction: 0,
                 isCode: 0,
                 isProperty: 0,
@@ -256,6 +275,7 @@
                     projectName: '',
                     projectCode: '',
                     projectManager: '',
+                    tester: '',
                     groupName: '',
                     members: ''
                 },
@@ -285,6 +305,7 @@
                 },
                 testApplyList: [],
                 addTesterList: [],
+                TesterList: [],
                 pagetotal: 1,
                 pageSize: 10,
                 currentPage: 1,
@@ -429,6 +450,25 @@
                                     on: {
                                         click: function () {
                                             var projectId = 'projectId=' + params.row.projectid
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: '/api/PTJ/user/getUsers.do',
+                                                data: '',
+                                                contentType: 'text/plain',
+                                                success: (data) => {
+                                                    if (data.status === 0) {
+                                                        for (let i = 0; i < data.data.length; i++) {
+                                                            that.TesterList[i] = {
+                                                                label: data.data[i].cn,
+                                                                value: data.data[i].id
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                error: () => {
+                                                    console.log('error')
+                                                }
+                                            })
                                             $.ajax({
                                                 type: 'POST',
                                                 url: '/api/PTJ/project/detail.do',
@@ -805,8 +845,10 @@
             }
             if (getauthorityid === '1') {
                 this.showNewProject = true
+                this.disabled = false
             } else {
                 this.showNewProject = false
+                this.disabled = true
             }
             this.userName = sessionStorage.getItem('userName')
             this.getNowDate()
