@@ -49,7 +49,8 @@
         }
 
         .row {
-            margin: 0  0 10px 0;
+            margin: 0 0 10px 0;
+            line-height: 35px;
         }
     </style>
 </head>
@@ -139,17 +140,14 @@
                 </div>
                 <div style="flex: 1">
                     <p>项目经理：{{detailproinfo.projectManager}}</p>
-                    <p style="color: transparent;">.</p>
                 </div>
             </div>
-
         </div>
         <div class="row">
             <span style="font-size: 14px;font-weight: bolder;">测试负责人：</span>
             <i-select transfer :disabled="disabled" v-model="detailproinfo.tester"
                       style="width:150px;margin-left: 5px;">
-                <i-option v-for="item in TesterList" :value="item.value" :key="item.label">{{ item.label }}
-                </i-option>
+                <i-option v-for="item in TesterList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
             </i-select>
         </div>
         <div class="row">
@@ -166,13 +164,13 @@
                 <p>申请时间：{{ item.cTime === null ? '暂无' : timestampToTime(item.cTime/1000) }}</p>
                 <p>测试类型：</p>
                 <div style="text-align: center;">
-                    <span><i-button :type="item.isFunction===0 ? istesttype0 : istesttype1">功能测试</i-button><i-button
+                    <span><i-button :type="item.isFunction===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isFunction===0?item.isFunction=1:item.isFunction=0">功能测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isProperty===0 ? istesttype0 : istesttype1">性能测试</i-button><i-button
+                            :type="item.isProperty===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isProperty===0?item.isProperty=1:item.isProperty=0">性能测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isCode===0 ? istesttype0 : istesttype1">代码测试</i-button><i-button
+                            :type="item.isCode===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isCode===0?item.isCode=1:item.isCode=0">代码测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isSecurity===0 ? istesttype0 : istesttype1">安全测试</i-button></span>
+                            :type="item.isSecurity===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isSecurity===0?item.isSecurity=1:item.isSecurity=0">安全测试</i-button></span>
                 </div>
                 <p>基线：
                     <i-button @click="baselineshow[index] === null ? true : baselineshow[index]=!baselineshow[index]"
@@ -212,10 +210,10 @@
                 <i-input style="width: 400px" v-model="newProjectFormDic.projectManager"></i-input>
             </form-item>
             <form-item label="测试类型" prop="testType">
-                <span :class="selectFunction?'selected':'testType'" @click="selectTestType('function')">功能测试</span>
-                <span :class="selectCapacity?'selected':'testType'" @click="selectTestType('capacity')">性能测试</span>
-                <span :class="selectCode?'selected':'testType'" @click="selectTestType('code')">代码测试</span>
-                <span :class="selectSecurity?'selected':'testType'" @click="selectTestType('security')">安全测试</span>
+                <span :class="selectFunction?'selected':'testType'" @click="newSelectTestType('function')">功能测试</span>
+                <span :class="selectCapacity?'selected':'testType'" @click="newSelectTestType('capacity')">性能测试</span>
+                <span :class="selectCode?'selected':'testType'" @click="newSelectTestType('code')">代码测试</span>
+                <span :class="selectSecurity?'selected':'testType'" @click="newSelectTestType('security')">安全测试</span>
             </form-item>
             <form-item label="测试负责人" prop="tester">
                 <i-select transfer v-model="newProjectFormDic.tester" style="width:150px;margin-left: 5px;">
@@ -316,6 +314,7 @@
                 modal2: false,
                 modal3: false,
                 isuserdefined: false,
+                preventClick: false,
                 searchTime: {
                     blurdate: 1,
                     detail: null,
@@ -441,6 +440,7 @@
                         // width: 200,
                         render: (h, params) => {
                             let that = this
+                            // console.log(params.row)
                             return h('div', [
                                 h('i-button', {
                                     props: {
@@ -487,8 +487,10 @@
                                                         that.detailproinfo.projectCode = data.data.projectCode
                                                         that.detailproinfo.projectManager = data.data.projectManager
                                                         that.detailproinfo.members = data.data.members
+                                                        that.detailproinfo.tester = data.data.testId
                                                         if (data.data.testApplyVoLists[0].id != null) {
                                                             that.testApplyList = data.data.testApplyVoLists
+                                                            that.preventClick = true
                                                         } else {
                                                             that.testApplyList = [{
                                                                 id: 0,
@@ -502,6 +504,7 @@
                                                                 state: null,
                                                                 applyUploadLists: []
                                                             }]
+                                                            that.preventClick = false
                                                         }
                                                     } else if (data.status === 10) {
                                                         that.$Notice.warning({
@@ -515,6 +518,7 @@
                                                     console.log('error')
                                                 }
                                             })
+                                            that.selectedProjectID = params.row.projectid
                                             that.modal1 = true
                                         }
                                     }
@@ -936,8 +940,6 @@
                                 value: data.data[i].id
                             }
                         }
-                        // console.log(that.testerList)
-                        // that.changePage(1)
                     }
                 }).catch(function (err) {
                     console.log(err)
@@ -948,7 +950,7 @@
                     this.selectedProject = current.projectNumber
                 }
             },
-            selectTestType(type) {
+            newSelectTestType(type) {
                 if (type === 'function') {
                     // console.log(this.newProjectFormDic.testType)
                     let index = this.newProjectFormDic.testType.indexOf(type)
@@ -1106,13 +1108,74 @@
                 this.userout()
             },
             ok1() {
-                this.modal1 = false
                 this.testrequest = false
                 this.baselineshow = []
+                let params = {}
+                if (this.preventClick) {
+                    params = {
+                        id: this.selectedProjectID,
+                        managerName: this.detailproinfo.projectManager,
+                        testId: this.detailproinfo.tester,
+                        projectName: this.detailproinfo.projectName,
+                        members: this.detailproinfo.members,
+                    }
+                } else {
+                    params = {
+                        id: this.selectedProjectID,
+                        managerName: this.detailproinfo.projectManager,
+                        testId: this.detailproinfo.tester,
+                        projectName: this.detailproinfo.projectName,
+                        members: this.detailproinfo.members,
+                        isFunction: this.testApplyList[0].isFunction,
+                        isProperty: this.testApplyList[0].isProperty,
+                        isCode: this.testApplyList[0].isCode,
+                        isSecurity: this.testApplyList[0].isSecurity,
+                    }
+                }
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/project/updateProject.do',
+                        data: JSON.stringify(params),
+                        contentType: 'text/plain',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        that.$Notice.success({
+                            title: '操作成功',
+                            desc: data.msg
+                        })
+                        that.changePage(1)
+                        // console.log(data)
+                        // that.changePage(1)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                    that.$Notice.error({
+                        title: '操作失败',
+                        desc: '服务器内部错误'
+                    })
+                })
+                this.detailproinfo = {
+                    projectName: '',
+                    projectCode: '',
+                    projectManager: '',
+                    tester: '',
+                    groupName: '',
+                    members: ''
+                }
+                this.modal1 = false
             },
             ok2() {
                 this.$refs['formValidate'].validate((valid) => {
-                    console.log(this.newProjectFormDic.tester)
                     if (valid) {
                         let params = {
                             managerName: this.newProjectFormDic.projectManager,
@@ -1233,6 +1296,14 @@
                 this.modal1 = false
                 this.testrequest = false
                 this.baselineshow = []
+                this.detailproinfo = {
+                    projectName: '',
+                        projectCode: '',
+                        projectManager: '',
+                        tester: '',
+                        groupName: '',
+                        members: ''
+                }
             },
             cancel2() {
                 this.modal2 = false
