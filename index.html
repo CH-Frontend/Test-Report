@@ -164,13 +164,17 @@
                 <p>申请时间：{{ item.cTime === null ? '暂无' : timestampToTime(item.cTime/1000) }}</p>
                 <p>测试类型：</p>
                 <div style="text-align: center;">
-                    <span><i-button :type="item.isFunction===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isFunction===0?item.isFunction=1:item.isFunction=0">功能测试</i-button><i-button
+                    <span><i-button :type="item.isFunction===0 ? istesttype0 : istesttype1"
+                                    @click="preventClick?'':item.isFunction===0?item.isFunction=1:item.isFunction=0">功能测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isProperty===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isProperty===0?item.isProperty=1:item.isProperty=0">性能测试</i-button><i-button
+                            :type="item.isProperty===0 ? istesttype0 : istesttype1"
+                            @click="preventClick?'':item.isProperty===0?item.isProperty=1:item.isProperty=0">性能测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isCode===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isCode===0?item.isCode=1:item.isCode=0">代码测试</i-button><i-button
+                            :type="item.isCode===0 ? istesttype0 : istesttype1"
+                            @click="preventClick?'':item.isCode===0?item.isCode=1:item.isCode=0">代码测试</i-button><i-button
                             style="margin-left: 20px;"
-                            :type="item.isSecurity===0 ? istesttype0 : istesttype1" @click="preventClick?'':item.isSecurity===0?item.isSecurity=1:item.isSecurity=0">安全测试</i-button></span>
+                            :type="item.isSecurity===0 ? istesttype0 : istesttype1"
+                            @click="preventClick?'':item.isSecurity===0?item.isSecurity=1:item.isSecurity=0">安全测试</i-button></span>
                 </div>
                 <p>基线：
                     <i-button @click="baselineshow[index] === null ? true : baselineshow[index]=!baselineshow[index]"
@@ -504,7 +508,12 @@
                                                                 state: null,
                                                                 applyUploadLists: []
                                                             }]
-                                                            that.preventClick = false
+                                                            let authorityid = sessionStorage.getItem('authorityid')
+                                                            if (authorityid !== 1) {
+                                                                that.preventClick = true
+                                                            } else {
+                                                                that.preventClick = false
+                                                            }
                                                         }
                                                     } else if (data.status === 10) {
                                                         that.$Notice.warning({
@@ -518,6 +527,7 @@
                                                     console.log('error')
                                                 }
                                             })
+
                                             that.selectedProjectID = params.row.projectid
                                             that.modal1 = true
                                         }
@@ -850,9 +860,11 @@
             if (getauthorityid === '1') {
                 this.showNewProject = true
                 this.disabled = false
+                this.preventClick = false
             } else {
                 this.showNewProject = false
                 this.disabled = true
+                this.preventClick = true
             }
             this.userName = sessionStorage.getItem('userName')
             this.getNowDate()
@@ -1110,67 +1122,70 @@
             ok1() {
                 this.testrequest = false
                 this.baselineshow = []
-                let params = {}
-                if (this.preventClick) {
-                    params = {
-                        id: this.selectedProjectID,
-                        managerName: this.detailproinfo.projectManager,
-                        testId: this.detailproinfo.tester,
-                        projectName: this.detailproinfo.projectName,
-                        members: this.detailproinfo.members,
-                    }
-                } else {
-                    params = {
-                        id: this.selectedProjectID,
-                        managerName: this.detailproinfo.projectManager,
-                        testId: this.detailproinfo.tester,
-                        projectName: this.detailproinfo.projectName,
-                        members: this.detailproinfo.members,
-                        isFunction: this.testApplyList[0].isFunction,
-                        isProperty: this.testApplyList[0].isProperty,
-                        isCode: this.testApplyList[0].isCode,
-                        isSecurity: this.testApplyList[0].isSecurity,
-                    }
-                }
-                var promis = new Promise(function (resolve, reject) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/PTJ/project/updateProject.do',
-                        data: JSON.stringify(params),
-                        contentType: 'text/plain',
-                        success: (data) => {
-                            resolve(data)
-                        },
-                        error: (err) => {
-                            reject(err)
+                let getauthorityid = sessionStorage.getItem('authorityid')
+                if (getauthorityid === 1) {
+                    let params = {}
+                    if (this.preventClick) {
+                        params = {
+                            id: this.selectedProjectID,
+                            managerName: this.detailproinfo.projectManager,
+                            testId: this.detailproinfo.tester,
+                            projectName: this.detailproinfo.projectName,
+                            members: this.detailproinfo.members,
                         }
-                    })
-                })
-                let that = this
-                promis.then(function (data) {
-                    if (data.status === 0) {
-                        that.$Notice.success({
-                            title: '操作成功',
-                            desc: data.msg
-                        })
-                        that.changePage(1)
-                        // console.log(data)
-                        // that.changePage(1)
+                    } else {
+                        params = {
+                            id: this.selectedProjectID,
+                            managerName: this.detailproinfo.projectManager,
+                            testId: this.detailproinfo.tester,
+                            projectName: this.detailproinfo.projectName,
+                            members: this.detailproinfo.members,
+                            isFunction: this.testApplyList[0].isFunction,
+                            isProperty: this.testApplyList[0].isProperty,
+                            isCode: this.testApplyList[0].isCode,
+                            isSecurity: this.testApplyList[0].isSecurity,
+                        }
                     }
-                }).catch(function (err) {
-                    console.log(err)
-                    that.$Notice.error({
-                        title: '操作失败',
-                        desc: '服务器内部错误'
+                    var promis = new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/PTJ/project/updateProject.do',
+                            data: JSON.stringify(params),
+                            contentType: 'text/plain',
+                            success: (data) => {
+                                resolve(data)
+                            },
+                            error: (err) => {
+                                reject(err)
+                            }
+                        })
                     })
-                })
-                this.detailproinfo = {
-                    projectName: '',
-                    projectCode: '',
-                    projectManager: '',
-                    tester: '',
-                    groupName: '',
-                    members: ''
+                    let that = this
+                    promis.then(function (data) {
+                        if (data.status === 0) {
+                            that.$Notice.success({
+                                title: '操作成功',
+                                desc: data.msg
+                            })
+                            that.changePage(1)
+                            // console.log(data)
+                            // that.changePage(1)
+                        }
+                    }).catch(function (err) {
+                        console.log(err)
+                        that.$Notice.error({
+                            title: '操作失败',
+                            desc: '服务器内部错误'
+                        })
+                    })
+                    this.detailproinfo = {
+                        projectName: '',
+                        projectCode: '',
+                        projectManager: '',
+                        tester: '',
+                        groupName: '',
+                        members: ''
+                    }
                 }
                 this.modal1 = false
             },
@@ -1234,10 +1249,6 @@
                         this.$refs['formValidate'].resetFields()
                     }
                 })
-
-                // if (this.newProjectFormDic.testType.indexOf())
-                // this.testrequest = false
-                // this.baselineshow = []
             },
             ok3() {
                 if (this.selectedProject === '') {
@@ -1298,11 +1309,11 @@
                 this.baselineshow = []
                 this.detailproinfo = {
                     projectName: '',
-                        projectCode: '',
-                        projectManager: '',
-                        tester: '',
-                        groupName: '',
-                        members: ''
+                    projectCode: '',
+                    projectManager: '',
+                    tester: '',
+                    groupName: '',
+                    members: ''
                 }
             },
             cancel2() {
