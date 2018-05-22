@@ -33,6 +33,10 @@
             color: #fff !important;
         }
 
+        .ivu-table-row-highlight td, tr.ivu-table-row-highlight.ivu-table-row-hover td, .ivu-table-stripe .ivu-table-body tr.ivu-table-row-highlight:nth-child(2n) td, .ivu-table-stripe .ivu-table-fixed-body tr.ivu-table-row-highlight:nth-child(2n) td{
+            background: #2d8cf0 !important;
+            color: #fff !important;
+        }
         .testType {
             border: 2px solid #ccc;
             padding: 8px 13px;
@@ -127,6 +131,13 @@
             @on-ok="ok4"
             @on-cancel="cancel4">
         <p>是否更改项目信息?</p>
+    </Modal>
+    <Modal
+            v-model="modal5"
+            title="提示"
+            @on-ok="ok5"
+            @on-cancel="cancel5">
+        <p>是否关联所选项目?</p>
     </Modal>
     <Modal
             v-model="modal1"
@@ -246,7 +257,7 @@
             width="700"
             @on-cancel="cancel3">
         <div style="margin-bottom: 10px; font-size: 14px">请选择关联项目:</div>
-        <i-table ref="connectPMIS" highlight-row border :columns="columns1" :data="data1"
+        <i-table ref="connectPMIS" highlight-row height="400" border :columns="columns1" :data="data1"
                  @on-current-change="selectTable"></i-table>
         <div slot="footer">
             <i-button type="primary" @click="ok3">确认关联</i-button>
@@ -325,6 +336,7 @@
                 modal2: false,
                 modal3: false,
                 modal4: false,
+                modal5: false,
                 isuserdefined: false,
                 preventClick: false,
                 searchTime: {
@@ -990,7 +1002,6 @@
             },
             newSelectTestType(type) {
                 if (type === 'function') {
-                    // console.log(this.newProjectFormDic.testType)
                     let index = this.newProjectFormDic.testType.indexOf(type)
                     if (index === -1) {
                         this.selectFunction = true
@@ -1224,55 +1235,11 @@
                         title: '警告',
                         desc: '请选择关联项目'
                     })
-                    this.modal3 = true
+                    // this.modal3 = true
                 } else {
+                    this.modal5 = true
                     this.modal3 = false
-                    // console.log(this.selectedProject)
-                    let params = {
-                        createProjectId: this.selectedProjectID,
-                        PMISProjectId: this.selectedProject
-                    }
-                    var promis = new Promise(function (resolve, reject) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/PTJ/project/updateProjectByPMIS.do',
-                            data: JSON.stringify(params),
-                            contentType: 'text/plain',
-                            success: (data) => {
-                                resolve(data)
-                            },
-                            error: (err) => {
-                                reject(err)
-                            }
-                        })
-                    })
-                    let that = this
-                    promis.then(function (data) {
-                        if (data.status === 0) {
-                            that.$Notice.success({
-                                title: '操作成功',
-                                desc: data.msg
-                            })
-                            that.changePage(1)
-                        } else if (data.status === 10) {
-                            that.$Notice.warning({
-                                title: '登录超时',
-                                desc: '用户登录超时，即将跳转到登录页面'
-                            })
-                            setTimeout(that.userout(), 5000)
-                        } else {
-                            that.$Notice.error({
-                                title: '操作失败',
-                                desc: data.msg
-                            })
-                        }
-                    }).catch(function (err) {
-                        console.log(err)
-                    });
                 }
-                this.selectedProject = ''
-                this.selectedProjectID = ''
-                this.$refs['connectPMIS'].clearCurrentRow()
             },
             ok4() {
                 let getauthorityid = sessionStorage.getItem('authorityid')
@@ -1348,6 +1315,55 @@
                 }
                 this.modal4 = false
             },
+            ok5() {
+                    // console.log(this.selectedProject)
+                    let params = {
+                        createProjectId: this.selectedProjectID,
+                        PMISProjectId: this.selectedProject
+                    }
+                    var promis = new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/PTJ/project/updateProjectByPMIS.do',
+                            data: JSON.stringify(params),
+                            contentType: 'text/plain',
+                            success: (data) => {
+                                resolve(data)
+                            },
+                            error: (err) => {
+                                reject(err)
+                            }
+                        })
+                    })
+                    let that = this
+                    promis.then(function (data) {
+                        if (data.status === 0) {
+                            that.$Notice.success({
+                                title: '操作成功',
+                                desc: data.msg
+                            })
+                            that.changePage(1)
+                            this.modal3 = false
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        } else {
+                            that.$Notice.error({
+                                title: '操作失败',
+                                desc: data.msg
+                            })
+                        }
+                    }).catch(function (err) {
+                        console.log(err)
+                    });
+                this.modal5 = false
+                this.selectedProject = ''
+                this.selectedProjectID = ''
+                this.$refs['connectPMIS'].clearCurrentRow()
+            },
             cancel() {
                 // this.$Message.info('Clicked cancel')
             },
@@ -1387,6 +1403,10 @@
             cancel4() {
                 this.modal4 = false
                 this.modal1 = true
+            },
+            cancel5() {
+                this.modal5 = false
+                this.modal3 = true
             },
             userout: function () {
                 $.ajax({
