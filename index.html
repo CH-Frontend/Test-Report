@@ -122,6 +122,13 @@
         <p>您可能有数据没有保存，确认退出吗？</p>
     </Modal>
     <Modal
+            v-model="modal4"
+            title="提示"
+            @on-ok="ok4"
+            @on-cancel="cancel4">
+        <p>是否更改项目信息?</p>
+    </Modal>
+    <Modal
             v-model="modal1"
             title="项目详情"
             width="700"
@@ -317,6 +324,7 @@
                 modal1: false,
                 modal2: false,
                 modal3: false,
+                modal4: false,
                 isuserdefined: false,
                 preventClick: false,
                 searchTime: {
@@ -1140,78 +1148,7 @@
             ok1() {
                 this.testrequest = false
                 this.baselineshow = []
-                let getauthorityid = sessionStorage.getItem('authorityid')
-                console.log(getauthorityid)
-                if (getauthorityid === '1') {
-                    let params = {}
-                    if (this.preventClick) {
-                        params = {
-                            id: this.selectedProjectID,
-                            managerName: this.detailproinfo.projectManager,
-                            testId: this.detailproinfo.tester,
-                            projectName: this.detailproinfo.projectName,
-                            members: this.detailproinfo.members,
-                        }
-                    } else {
-                        params = {
-                            id: this.selectedProjectID,
-                            managerName: this.detailproinfo.projectManager,
-                            testId: this.detailproinfo.tester,
-                            projectName: this.detailproinfo.projectName,
-                            members: this.detailproinfo.members,
-                            isFunction: this.testApplyList[0].isFunction,
-                            isProperty: this.testApplyList[0].isProperty,
-                            isCode: this.testApplyList[0].isCode,
-                            isSecurity: this.testApplyList[0].isSecurity,
-                        }
-                    }
-                    var promis = new Promise(function (resolve, reject) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/PTJ/project/updateProject.do',
-                            data: JSON.stringify(params),
-                            contentType: 'text/plain',
-                            success: (data) => {
-                                resolve(data)
-                            },
-                            error: (err) => {
-                                reject(err)
-                            }
-                        })
-                    })
-                    let that = this
-                    promis.then(function (data) {
-                        if (data.status === 0) {
-                            that.$Notice.success({
-                                title: '操作成功',
-                                desc: data.msg
-                            })
-                            that.changePage(1)
-                            // console.log(data)
-                            // that.changePage(1)
-                        } else if (data.status === 10) {
-                            that.$Notice.warning({
-                                title: '登录超时',
-                                desc: '用户登录超时，即将跳转到登录页面'
-                            })
-                            setTimeout(that.userout(), 5000)
-                        }
-                    }).catch(function (err) {
-                        console.log(err)
-                        that.$Notice.error({
-                            title: '操作失败',
-                            desc: '服务器内部错误'
-                        })
-                    })
-                    this.detailproinfo = {
-                        projectName: '',
-                        projectCode: '',
-                        projectManager: '',
-                        tester: '',
-                        groupName: '',
-                        members: ''
-                    }
-                }
+                this.modal4 = true
                 this.modal1 = false
             },
             ok2() {
@@ -1337,6 +1274,80 @@
                 this.selectedProjectID = ''
                 this.$refs['connectPMIS'].clearCurrentRow()
             },
+            ok4() {
+                let getauthorityid = sessionStorage.getItem('authorityid')
+                if (getauthorityid === '1') {
+                    let params = {}
+                    if (this.preventClick) {
+                        params = {
+                            id: this.selectedProjectID,
+                            managerName: this.detailproinfo.projectManager,
+                            testId: this.detailproinfo.tester,
+                            projectName: this.detailproinfo.projectName,
+                            members: this.detailproinfo.members,
+                        }
+                    } else {
+                        params = {
+                            id: this.selectedProjectID,
+                            managerName: this.detailproinfo.projectManager,
+                            testId: this.detailproinfo.tester,
+                            projectName: this.detailproinfo.projectName,
+                            members: this.detailproinfo.members,
+                            isFunction: this.testApplyList[0].isFunction,
+                            isProperty: this.testApplyList[0].isProperty,
+                            isCode: this.testApplyList[0].isCode,
+                            isSecurity: this.testApplyList[0].isSecurity,
+                        }
+                    }
+                    var promis = new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/PTJ/project/updateProject.do',
+                            data: JSON.stringify(params),
+                            contentType: 'text/plain',
+                            success: (data) => {
+                                resolve(data)
+                            },
+                            error: (err) => {
+                                reject(err)
+                            }
+                        })
+                    })
+                    let that = this
+                    promis.then(function (data) {
+                        if (data.status === 0) {
+                            that.$Notice.success({
+                                title: '操作成功',
+                                desc: data.msg
+                            })
+                            that.changePage(1)
+                            // console.log(data)
+                            // that.changePage(1)
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        }
+                    }).catch(function (err) {
+                        console.log(err)
+                        that.$Notice.error({
+                            title: '操作失败',
+                            desc: '服务器内部错误'
+                        })
+                    })
+                    this.detailproinfo = {
+                        projectName: '',
+                        projectCode: '',
+                        projectManager: '',
+                        tester: '',
+                        groupName: '',
+                        members: ''
+                    }
+                }
+                this.modal4 = false
+            },
             cancel() {
                 // this.$Message.info('Clicked cancel')
             },
@@ -1367,13 +1378,15 @@
                     members: ''
                 }
                 this.$refs['formValidate'].resetFields()
-                // this.testrequest = false
-                // this.baselineshow = []
             },
             cancel3() {
                 this.modal3 = false
                 this.selectedProject = ''
                 this.$refs['connectPMIS'].clearCurrentRow()
+            },
+            cancel4() {
+                this.modal4 = false
+                this.modal1 = true
             },
             userout: function () {
                 $.ajax({
