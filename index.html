@@ -889,6 +889,12 @@
                     that.testerList = that.testerList.concat(data.data)
                     // console.log(that.testerList)
                     that.changePage(1)
+                } else if (data.status === 10) {
+                    that.$Notice.warning({
+                        title: '登录超时',
+                        desc: '用户登录超时，即将跳转到登录页面'
+                    })
+                    setTimeout(that.userout(), 5000)
                 }
             }).catch(function (err) {
                 console.log(err)
@@ -922,6 +928,12 @@
                             datalist.projectNumber = data.data[i].id
                             that.data1.push(datalist)
                         }
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
                     }
                 }).catch(function (err) {
                     console.log(err)
@@ -952,6 +964,12 @@
                                 value: data.data[i].id
                             }
                         }
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
                     }
                 }).catch(function (err) {
                     console.log(err)
@@ -1170,6 +1188,12 @@
                             that.changePage(1)
                             // console.log(data)
                             // that.changePage(1)
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
                         }
                     }).catch(function (err) {
                         console.log(err)
@@ -1226,6 +1250,12 @@
                                 that.changePage(1)
                                 // console.log(data)
                                 // that.changePage(1)
+                            } else if (data.status === 10) {
+                                that.$Notice.warning({
+                                    title: '登录超时',
+                                    desc: '用户登录超时，即将跳转到登录页面'
+                                })
+                                setTimeout(that.userout(), 5000)
                             }
                         }).catch(function (err) {
                             console.log(err)
@@ -1286,6 +1316,12 @@
                                 desc: data.msg
                             })
                             that.changePage(1)
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
                         } else {
                             that.$Notice.error({
                                 title: '操作失败',
