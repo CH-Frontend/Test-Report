@@ -1141,7 +1141,8 @@
                 this.testrequest = false
                 this.baselineshow = []
                 let getauthorityid = sessionStorage.getItem('authorityid')
-                if (getauthorityid === 1) {
+                console.log(getauthorityid)
+                if (getauthorityid === '1') {
                     let params = {}
                     if (this.preventClick) {
                         params = {
