@@ -528,12 +528,6 @@
                                                                 state: null,
                                                                 applyUploadLists: []
                                                             }]
-                                                            let authorityid = sessionStorage.getItem('authorityid')
-                                                            if (authorityid !== 1) {
-                                                                that.preventClick = true
-                                                            } else {
-                                                                that.preventClick = false
-                                                            }
                                                         }
                                                     } else if (data.status === 10) {
                                                         that.$Notice.warning({
