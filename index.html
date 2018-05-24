@@ -339,6 +339,7 @@
                 modal5: false,
                 isuserdefined: false,
                 preventClick: false,
+                isChanged: false,
                 searchTime: {
                     blurdate: 1,
                     detail: null,
@@ -516,6 +517,7 @@
                                                             that.testApplyList = data.data.testApplyVoLists
                                                             that.preventClick = true
                                                         } else {
+                                                            that.preventClick = false
                                                             that.testApplyList = [{
                                                                 id: 0,
                                                                 applyId: '暂无',
