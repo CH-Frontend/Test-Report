@@ -94,7 +94,7 @@
 		        <i-option v-for="item in projectList" :value="item.value" :key="item.value">{{ item.label }}</i-option>
 		    </i-select></span>
                     <span>测试负责人 <i-select v-model="searchTester" style="width:150px;margin-left: 5px;"
-                                          @on-change="ChangeTester">
+                                          filterable @on-change="ChangeTester">
                         <i-option v-for="item in testerList" :value="item.cn" :key="item.id">{{ item.cn }}</i-option>
                     </i-select>
                     </span>
