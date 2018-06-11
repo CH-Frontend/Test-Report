@@ -88,6 +88,8 @@
                     <tr style="height: 30px;">
                         <th style="text-align: center;">bug/漏洞/指标</th>
                         <th style="text-align: center;">今日发现bug数</th>
+                        <th style="text-align: center;">今日解决bug数</th>
+                        <th style="text-align: center;">今日重新打开bug数</th>
                         <th style="text-align: center;">累计发现bug数量/结果</th>
                         <th style="text-align: center;">累计遗留bug数量/结果</th>
                         <th style="text-align: center;">结论</th>
@@ -97,6 +99,10 @@
                     <tr>
                         <td>A级</td>
                         <td><p v-html="alldata.functionJournal.bugA"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugAClosed"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugAReopen"
                                style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.functionJournal.bugASum" disabled="disabled"
                                style="border: none; width: 100%; text-align: center"/></td>
@@ -123,6 +129,10 @@
                         <td>B级</td>
                         <td><p v-html="alldata.functionJournal.bugB"
                                style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugBClosed"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugBReopen"
+                               style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.functionJournal.bugBSum" disabled="disabled"
                                style="border: none; width: 100%; text-align: center"/></td>
                         <td><p v-html="alldata.functionJournal.bugBRemain"
@@ -132,6 +142,10 @@
                         <td>C级</td>
                         <td><p v-html="alldata.functionJournal.bugC"
                                style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugCClosed"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugCReopen"
+                               style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.functionJournal.bugCSum" disabled="disabled"
                                style="border: none; width: 100%; text-align: center"/></td>
                         <td><p v-html="alldata.functionJournal.bugCRemain"
@@ -140,6 +154,10 @@
                     <tr>
                         <td>D级</td>
                         <td><p v-html="alldata.functionJournal.bugD"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugDClosed"
+                               style="border: none; width: 100%; text-align: center"></td>
+                        <td><p v-html="alldata.functionJournal.bugDReopen"
                                style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.functionJournal.bugDSum" disabled="disabled"
                                style="border: none; width: 100%; text-align: center"/></td>
@@ -164,6 +182,8 @@
                     <tr style="height: 30px;">
                         <th style="text-align: center;">bug/漏洞/指标</th>
                         <th style="text-align: center;">今日发现bug数</th>
+                        <th style="text-align: center;">今日解决bug数</th>
+                        <th style="text-align: center;">今日重新打开bug数</th>
                         <th style="text-align: center;">累计发现bug数量/结果</th>
                         <th style="text-align: center;">累计遗留bug数量/结果</th>
                         <th style="text-align: center;">结论</th>
@@ -173,6 +193,8 @@
                     <tr>
                         <td>A级</td>
                         <td><p v-html="alldata.codeJournal.bugA" style="border: none; width: 100%; text-align: center">
+                        </td><td><p v-html="alldata.codeJournal.bugAClosed" style="border: none; width: 100%; text-align: center">
+                        </td><td><p v-html="alldata.codeJournal.bugAReopen" style="border: none; width: 100%; text-align: center">
                         </td>
                         <td><p v-html="alldata.codeJournal.bugASum"
                                style="border: none; width: 100%; text-align: center"/></td>
@@ -198,6 +220,8 @@
                     <tr>
                         <td>B级</td>
                         <td><p v-html="alldata.codeJournal.bugB" style="border: none; width: 100%; text-align: center">
+                        </td> <td><p v-html="alldata.codeJournal.bugBClosed" style="border: none; width: 100%; text-align: center">
+                        </td> <td><p v-html="alldata.codeJournal.bugBReopen" style="border: none; width: 100%; text-align: center">
                         </td>
                         <td><p v-html="alldata.codeJournal.bugBSum"
                                style="border: none; width: 100%; text-align: center"/></td>
@@ -223,7 +247,7 @@
                         <th style="text-align: center;">bug/漏洞/指标</th>
                         <th style="text-align: center;">达标数量</th>
                         <th style="text-align: center;">不达标数量</th>
-                        <th style="text-align: center;">累计不达标数量</th>
+                        <th style="text-align: center;">达标率</th>
                         <th style="text-align: center;">结论</th>
                     </tr>
                     </thead>
@@ -234,8 +258,8 @@
                                style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.propertyJournal.cloudFail"
                                style="border: none; width: 100%; text-align: center"/></td>
-                        <td><p v-html="alldata.propertyJournal.cloudFailSum"
-                               style="border: none; width: 100%; text-align: center"/></td>
+                        <td><p v-html="alldata.propertyJournal.cloudPassRate + '%'"
+                               style="border: none; width: 100%; text-align: center"></p></td>
                         <td rowspan="2">
                             <radio-group v-model="alldata.propertyJournal.result" vertical style="text-align: center;">
                                 <Radio :disabled="propertydisabled0" :label="-1">
@@ -259,8 +283,8 @@
                                style="border: none; width: 100%; text-align: center"></td>
                         <td><p v-html="alldata.propertyJournal.webFail"
                                style="border: none; width: 100%; text-align: center"/></td>
-                        <td><p v-html="alldata.propertyJournal.webFailSum"
-                               style="border: none; width: 100%; text-align: center"/></td>
+                        <td><p v-html="alldata.propertyJournal.webPassRate + '%'"
+                               style="border: none; width: 100%; text-align: center"></p></td>
                     </tr>
                     </tbody>
                 </table>
