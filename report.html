@@ -108,7 +108,7 @@
         </div>
         <div style="width: 80%;margin-left: 10%;" v-show="isFunction">
             <div style="margin-top: 10px;margin-bottom: 10px;">
-                <p style="color: #666666;font-weight: bold;font-size: 16px;">功能测试</p>
+                <span style="color: #666666;font-weight: bold;font-size: 16px;">功能测试 <i-button @click="functionHistory" type="info" size="small" style="margin-left: 20px">查看历史记录</i-button></span>
                 <hr style="border: 1px solid #BFBFBF;margin-top: 10px;"/>
                 <p style="font-size: 12px;margin-top: 10px;">无A/B级bug遗留，功能测试通过，否则不通过</p>
             </div>
@@ -215,7 +215,7 @@
         </div>
         <div style="width: 80%;margin-left: 10%;" v-show="isCode">
             <div style="margin-top: 10px;margin-bottom: 10px;">
-                <p style="color: #666666;font-weight: bold;font-size: 16px;">代码测试</p>
+                <span style="color: #666666;font-weight: bold;font-size: 16px;">代码测试 <i-button @click="codeHistory" type="info" size="small" style="margin-left: 20px">查看历史记录</i-button></span>
                 <hr style="border: 1px solid #BFBFBF;margin-top: 10px;"/>
                 <p style="font-size: 12px;margin-top: 10px;">无A/B级bug遗留，代码测试通过，否则不通过</p>
             </div>
@@ -282,7 +282,7 @@
         </div>
         <div style="width: 80%;margin-left: 10%;" v-show="isProperty">
             <div style="margin-top: 10px;margin-bottom: 10px;">
-                <p style="color: #666666;font-weight: bold;font-size: 16px;">性能测试</p>
+                <span style="color: #666666;font-weight: bold;font-size: 16px;">性能测试 <i-button @click="propertyHistory" type="info" size="small" style="margin-left: 20px">查看历史记录</i-button></span>
                 <hr style="border: 1px solid #BFBFBF;margin-top: 10px;"/>
                 <p style="font-size: 12px;margin-top: 10px;">所有指标达标，则性能测试通过，否则不通过</p>
             </div>
@@ -343,7 +343,7 @@
         </div>
         <div style="width: 80%;margin-left: 10%;margin-bottom: 50px;" v-show="isSecurity">
             <div style="margin-top: 10px;margin-bottom: 10px;">
-                <p style="color: #666666;font-weight: bold;font-size: 16px;">安全测试</p>
+                <span style="color: #666666;font-weight: bold;font-size: 16px;">安全测试 <i-button @click="securityHistory" type="info" size="small" style="margin-left: 20px">查看历史记录</i-button></span>
                 <hr style="border: 1px solid #BFBFBF;margin-top: 10px;"/>
                 <p style="font-size: 12px;margin-top: 10px;">无高危/中危漏洞遗留，安全测试通过，否则不通过</p>
             </div>
@@ -441,6 +441,50 @@
                 @on-cancel="cancel1">
             <p>选择日期将导致数据更新，确定要选择日期吗？</p>
         </Modal>
+        <Modal
+                v-model="modal2"
+                title="功能测试日报历史记录"
+                width="800px"
+                @on-ok="ok2"
+                @on-cancel="cancel2">
+            <i-table :columns="functioncolumns" :data="functiondata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel2">关闭</i-button>
+            </div>
+        </Modal>
+        <Modal
+                v-model="modal3"
+                title="代码测试日报历史记录"
+                width="800px"
+                @on-ok="ok3"
+                @on-cancel="cancel3">
+            <i-table :columns="codecolumns" :data="codedata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel3">关闭</i-button>
+            </div>
+        </Modal>
+        <Modal
+                v-model="modal4"
+                title="性能测试日报历史记录"
+                width="800px"
+                @on-ok="ok4"
+                @on-cancel="cancel4">
+            <i-table :columns="propertycolumns" :data="propertydata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel4">关闭</i-button>
+            </div>
+        </Modal>
+        <Modal
+                v-model="modal5"
+                title="安全测试日报历史记录"
+                width="800px"
+                @on-ok="ok5"
+                @on-cancel="cancel5">
+            <i-table :columns="securitycolumns" :data="securitydata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel5">关闭</i-button>
+            </div>
+        </Modal>
     </div>
 </div>
 <script type="text/javascript" src="assets/js/vue.js"></script>
@@ -468,6 +512,10 @@
             isSecurity: false,
             modal0: false,
             modal1: false,
+            modal2: false,
+            modal3: false,
+            modal4: false,
+            modal5: false,
             loading: false,
             nowTime: '',
             userName: '',
@@ -486,6 +534,122 @@
             codeResult: null,
             capacityResult: null,
             securityResult: null,
+            functioncolumns: [
+                {
+                    title: '日期',
+                    key: 'time'
+                },
+                {
+                    title: 'bug/漏洞/指标',
+                    key: 'level'
+                },
+                {
+                    title: '今日发现bug数',
+                    key: 'find'
+                },
+                {
+                    title: '今日解决bug数',
+                    key: 'resolve'
+                },
+                {
+                    title: '今日重新打开bug数',
+                    key: 'open'
+                },
+                {
+                    title: '累计发现bug数量/结果',
+                    key: 'accumulate'
+                },
+                {
+                    title: '累计遗留bug数量/结果',
+                    key: 'remain'
+                }
+            ],
+            functiondata: [],
+            codecolumns: [
+                {
+                    title: '日期',
+                    key: 'time'
+                },
+                {
+                    title: 'bug/漏洞/指标',
+                    key: 'level'
+                },
+                {
+                    title: '今日发现bug数',
+                    key: 'find'
+                },
+                {
+                    title: '今日解决bug数',
+                    key: 'resolve'
+                },
+                {
+                    title: '今日重新打开bug数',
+                    key: 'open'
+                },
+                {
+                    title: '累计发现bug数量/结果',
+                    key: 'accumulate'
+                },
+                {
+                    title: '累计遗留bug数量/结果',
+                    key: 'remain'
+                }
+            ],
+            codedata: [],
+            propertycolumns: [
+                {
+                    title: '日期',
+                    key: 'time'
+                },
+                {
+                    title: 'bug/漏洞/指标',
+                    key: 'type'
+                },
+                {
+                    title: '达标数量',
+                    key: 'pass'
+                },
+                {
+                    title: '不达标数量',
+                    key: 'fail'
+                },
+                {
+                    title: '达标率',
+                    key: 'passrate'
+                }
+            ],
+            propertydata: [],
+            securitycolumns: [
+                {
+                    title: '日期',
+                    key: 'time'
+                },
+                {
+                    title: 'bug/漏洞/指标',
+                    key: 'level'
+                },
+                {
+                    title: '今日发现bug数',
+                    key: 'find'
+                },
+                {
+                    title: '今日解决bug数',
+                    key: 'resolve'
+                },
+                {
+                    title: '今日重新打开bug数',
+                    key: 'open'
+                },
+                {
+                    title: '累计发现bug数量/结果',
+                    key: 'accumulate'
+                },
+                {
+                    title: '累计遗留bug数量/结果',
+                    key: 'remain'
+                }
+            ],
+            securitydata: []
         },
         mounted() {
             this.userName = sessionStorage.getItem('userName')
@@ -497,6 +661,244 @@
             this.searchDate1 = timestamp
         },
         methods: {
+            functionHistory() {
+                let projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                let that = this
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/PTJ/journal/functionHistoryList.do',
+                    data: projectId,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        if (data.status === 0) {
+                            that.functiondata = []
+                            for(let i=0; i<data.data.length; i++) {
+                                let itemA = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'A级别',
+                                    find: data.data[i].bugA,
+                                    resolve: data.data[i].bugAClosed,
+                                    open: data.data[i].bugAReopen,
+                                    accumulate: data.data[i].bugASum,
+                                    remain: data.data[i].bugARemain
+                                }
+                                that.functiondata.push(itemA)
+                                let itemB = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'B级别',
+                                    find: data.data[i].bugB,
+                                    resolve: data.data[i].bugBClosed,
+                                    open: data.data[i].bugBReopen,
+                                    accumulate: data.data[i].bugBSum,
+                                    remain: data.data[i].bugBRemain
+                                }
+                                that.functiondata.push(itemB)
+                                let itemC = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'C级别',
+                                    find: data.data[i].bugC,
+                                    resolve: data.data[i].bugCClosed,
+                                    open: data.data[i].bugCReopen,
+                                    accumulate: data.data[i].bugCSum,
+                                    remain: data.data[i].bugCRemain
+                                }
+                                that.functiondata.push(itemC)
+                                let itemD = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'D级别',
+                                    find: data.data[i].bugD,
+                                    resolve: data.data[i].bugDClosed,
+                                    open: data.data[i].bugDReopen,
+                                    accumulate: data.data[i].bugDSum,
+                                    remain: data.data[i].bugDRemain
+                                }
+                                that.functiondata.push(itemD)
+                            }
+                            that.modal2 = true
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        }
+                    },
+                    error: function () {
+                        console.log('error')
+                    }
+                })
+            },
+            codeHistory() {
+                let projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                let that = this
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/PTJ/journal/codeHistoryList.do',
+                    data: projectId,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        if (data.status === 0) {
+                            that.codedata = []
+                            for(let i=0; i<data.data.length; i++) {
+                                let itemA = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'A级别',
+                                    find: data.data[i].bugA,
+                                    resolve: data.data[i].bugAClosed,
+                                    open: data.data[i].bugAReopen,
+                                    accumulate: data.data[i].bugASum,
+                                    remain: data.data[i].bugARemain
+                                }
+                                that.codedata.push(itemA)
+                                let itemB = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: 'B级别',
+                                    find: data.data[i].bugB,
+                                    resolve: data.data[i].bugBClosed,
+                                    open: data.data[i].bugBReopen,
+                                    accumulate: data.data[i].bugBSum,
+                                    remain: data.data[i].bugBRemain
+                                }
+                                that.codedata.push(itemB)
+                            }
+                            that.modal3 = true
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        }
+                    },
+                    error: function () {
+                        console.log('error')
+                    }
+                })
+            },
+            propertyHistory() {
+                let projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                let that = this
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/PTJ/journal/propertyHistoryList.do',
+                    data: projectId,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        if (data.status === 0) {
+                            that.propertydata = []
+                            for(let i=0; i<data.data.length; i++) {
+                                let itemA = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    type: '云端性能',
+                                    pass: data.data[i].cloudPass,
+                                    fail: data.data[i].cloudFail,
+                                    passrate: data.data[i].cloudPassRate,
+                                }
+                                that.propertydata.push(itemA)
+                                let itemB = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    type: 'Web性能',
+                                    pass: data.data[i].webPass,
+                                    fail: data.data[i].webFail,
+                                    passrate: data.data[i].webPassRate,
+                                }
+                                that.propertydata.push(itemB)
+                            }
+                            that.modal4 = true
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        }
+                    },
+                    error: function () {
+                        console.log('error')
+                    }
+                })
+            },
+            securityHistory() {
+                let projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                let that = this
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/PTJ/journal/securityHistoryList.do',
+                    data: projectId,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data) {
+                        if (data.status === 0) {
+                            that.securitydata = []
+                            for(let i=0; i<data.data.length; i++) {
+                                let itemA = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: '高危',
+                                    find: data.data[i].bugH,
+                                    resolve: data.data[i].bugHClosed,
+                                    open: data.data[i].bugHReopen,
+                                    accumulate: data.data[i].bugHSum,
+                                    remain: data.data[i].bugHRemain
+                                }
+                                that.securitydata.push(itemA)
+                                let itemB = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: '中危',
+                                    find: data.data[i].bugM,
+                                    resolve: data.data[i].bugMClosed,
+                                    open: data.data[i].bugMReopen,
+                                    accumulate: data.data[i].bugMSum,
+                                    remain: data.data[i].bugMRemain
+                                }
+                                that.securitydata.push(itemB)
+                                let itemC = {
+                                    time: that.timestampToTime1(data.data[i].cTime),
+                                    level: '低危',
+                                    find: data.data[i].bugL,
+                                    resolve: data.data[i].bugLClosed,
+                                    open: data.data[i].bugLReopen,
+                                    accumulate: data.data[i].bugLSum,
+                                    remain: data.data[i].bugLRemain
+                                }
+                                that.securitydata.push(itemC)
+                            }
+                            that.modal5 = true
+                        } else if (data.status === 10) {
+                            that.$Notice.warning({
+                                title: '登录超时',
+                                desc: '用户登录超时，即将跳转到登录页面'
+                            })
+                            setTimeout(that.userout(), 5000)
+                        }
+                    },
+                    error: function () {
+                        console.log('error')
+                    }
+                })
+            },
+            ok2() {
+                this.modal2 = false
+            },
+            cancel2() {
+                this.modal2 = false
+            },
+            ok3() {
+                this.modal3 = false
+            },
+            cancel3() {
+                this.modal3 = false
+            },
+            ok4() {
+                this.modal4 = false
+            },
+            cancel4() {
+                this.modal4 = false
+            },
+            ok5() {
+                this.modal5 = false
+            },
+            cancel5() {
+                this.modal5 = false
+            },
             handleClick() {
                 if (this.open === true) {
                     this.open = false
@@ -770,7 +1172,9 @@
                             webPass: null,
                             webFail: null,
                             webFailSum: null,
-                            result: null
+                            result: null,
+                            cloudPassRate: null,
+                            webPassRate: null
                         },
                         securityJournal: {
                             id: null,
@@ -906,7 +1310,9 @@
                             webPass: null,
                             webFail: null,
                             webFailSum: null,
-                            result: null
+                            result: null,
+                            cloudPassRate: null,
+                            webPassRate: null
                         },
                         securityJournal: {
                             id: null,
@@ -985,6 +1391,8 @@
                         updateparams.propertyJournal.webFail = this.alldata.propertyJournal.webFail
                         updateparams.propertyJournal.webFailSum = this.alldata.propertyJournal.webFailSum
                         updateparams.propertyJournal.result = this.alldata.propertyJournal.result
+                        updateparams.propertyJournal.cloudPassRate = this.alldata.propertyJournal.cloudPassRate
+                        updateparams.propertyJournal.webPassRate = this.alldata.propertyJournal.webPassRate
                     }
                     if (this.alldata.isSecurity === 0) {
                         updateparams.securityJournal = null
