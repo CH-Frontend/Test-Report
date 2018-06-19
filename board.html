@@ -1,7 +1,7 @@
-<!DOCTYPE html> 
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
-<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
-<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
 <head>
     <title>看板</title>
 
@@ -15,14 +15,14 @@
     <!-- Web Fonts -->
     <link rel="stylesheet" href="assets/css/css.css">
 
-	
-	
+
+
     <!-- CSS Global Compulsory -->
     <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/plugins/animate.css">
     <link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.min.css">
-    <!-- CSS Theme -->    
+    <!-- CSS Theme -->
     <link rel="stylesheet" href="assets/css/blue.css" id="style_color">
     <link rel="stylesheet" href="assets/plugins/iview/iview.css">
     <link href="assets/plugins/ionicons/css/ionicons.css" rel="stylesheet">
@@ -249,14 +249,14 @@
 	    opinionright6: [],
         opinionDataright6: [
 	        {
-	            name:'累计发现bug数',
+	            name:'达标率',
 	            type:'line',
-	            data:[]
+	            data:''
 	        },
 	        {
-	            name:'累计遗留bug数',
+	            name:'不达标数',
 	            type:'line',
-	            data:[]
+	            data:''
 	        }
 	     ],
 	    opinionright7: [],
@@ -599,8 +599,8 @@
 			  success: function(data){
 	               if (data.status === 0) {
                      that.opinionright6 = data.data.times
-                     that.opinionDataright6[0].data = data.data.sums
-                     that.opinionDataright6[1].data = data.data.remains
+                     that.opinionDataright6[0].data = data.data.passRate
+                     that.opinionDataright6[1].data = data.data.failNums
                      that.$nextTick(function() {
 			            that.drawLine2('right6')
 			        })
@@ -1044,7 +1044,7 @@
 						rotate:40
 					},
 		        }
-		    ],    
+		    ],
 		    yAxis : [
 		        {
 		            type : 'value'
@@ -1052,7 +1052,7 @@
 		    ],
 		    series : this.barseries0
 		  })
-        }, 
+        },
         drawbar1(id){
            this.charts = echarts.init(document.getElementById(id))
            this.charts.setOption({
@@ -1088,7 +1088,7 @@
 						rotate:40
 					},
 		        }
-		    ],    
+		    ],
 		    yAxis : [
 		        {
 		            type : 'value'
@@ -1132,7 +1132,7 @@
 						rotate:40
 					},
 		        }
-		    ],    
+		    ],
 		    yAxis : [
 		        {
 		            type : 'value'
@@ -1176,7 +1176,7 @@
 						rotate:40
 					},
 		        }
-		    ],    
+		    ],
 		    yAxis : [
 		        {
 		            type : 'value'
@@ -1264,10 +1264,13 @@
 		       }
 		     },
              tooltip: {
-		        trigger: 'axis'
+		        trigger: 'axis',
+                 // formatter: function (param) {
+                 //     return '<div style="color: #fff"><p>达标率:' + param[0].data + '%' + '</p><p>不达标数:' + param[1].data + '</p></div>'
+                 // }
 		     },
 		     legend: {
-		        data:['累计发现bug数','累计遗留bug数'],
+		        data:['达标率','不达标数'],
 		        top: '15%'
 		     },
 		     grid: {
@@ -1348,7 +1351,7 @@
 	            	sessionStorage.removeItem('listgroup')
 	            	sessionStorage.removeItem('listitem')
 	            	window.location.pathname = 'login.html'
-	            }  
+	            }
 	          },
 	          error: function(){
 	          	console.log('error')
