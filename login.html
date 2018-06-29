@@ -78,7 +78,7 @@
             <span class="input-group-addon">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>
             <input type="password" v-model="passWord" class="form-control" placeholder="Password">
         </div>
-        <div class="input-group margin-bottom-20">
+        <div v-show="checkCodeShow" class="input-group margin-bottom-20">
             <span class="input-group-addon">验&nbsp;&nbsp;证&nbsp;&nbsp;码</span>
             <input type="checkcode" v-model="checkCode" class="form-control"
                    style="width: 58%" placeholder="CheckCode">
@@ -132,7 +132,8 @@
             loading: false,
             userName: '',
             passWord: '',
-            checkCode: ''
+            checkCode: '',
+            checkCodeShow: false
         },
         mounted() {
             if (sessionStorage.getItem('autologin', this.autologin) === 'true') {
@@ -152,7 +153,7 @@
                         title: '用户名或密码不能为空',
                         desc: ''
                     })
-                } else if (this.checkCode === '') {
+                } else if (this.checkCodeShow === true && this.checkCode === '') {
                     this.$Notice.error({
                         title: '验证码不能为空',
                         desc: ''
@@ -172,11 +173,19 @@
                         contentType: 'text/plain',
                         success: function (data) {
                             if (data.status === 0) {
+                                that.checkCodeShow = false
                                 let authority = data.data.authorityid
                                 sessionStorage.setItem('authorityid', authority)
                                 that.autologinFc()
                                 sessionStorage.setItem('userId', data.data.id)
                                 window.location.pathname = 'index.html'
+                            } else if (data.status >= 3) {
+                                that.checkCodeShow = true
+                                that.$Notice.error({
+                                    title: data.msg,
+                                    desc: ''
+                                })
+                                that.getCheckImg()
                             } else {
                                 that.$Notice.error({
                                     title: data.msg,
