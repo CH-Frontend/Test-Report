@@ -6,6 +6,7 @@
 <!--[if !IE]><!-->
 <html lang="en"> <!--<![endif]-->
 <head>
+    <meta content="webkit" name="renderer" />
     <title>测试日报质量平台</title>
 
     <!-- Meta -->
@@ -635,7 +636,35 @@
                         }
                     },
                     {
-                        title: '操作',
+                        title: '项目状态',
+                        key: 'state',
+                        align: 'center',
+                        width: 100,
+                        render: (h, params) => {
+                            let that = this
+                            if (params.row.state == 3) {
+                                return h('span', {
+                                    style: {
+                                        fontWeight: 500
+                                    },
+                                }, '已暂停')
+                            } else if (params.row.state == 1) {
+                                return h('span', {
+                                    style: {
+                                        fontWeight: 500
+                                    },
+                                }, '正在执行')
+                            } else if (params.row.state == 2) {
+                                return h('span', {
+                                    style: {
+                                        fontWeight: 500
+                                    },
+                                }, '已完成')
+                            }
+                        }
+                    },
+                    {
+                        title: '日报',
                         key: 'action',
                         align: 'center',
                         width: 250,
@@ -643,69 +672,7 @@
                             // console.log(params.row)
                             let authorityid = sessionStorage.getItem('authorityid')
                             if (authorityid === '1') {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px',
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'report.html'
-                                            }
-                                        }
-                                    }, '填写日报'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px',
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'checkreport.html'
-                                            }
-                                        }
-                                    }, '查看日报'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            fontSize: '12px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let that = this
-                                                let id = params.row.projectid
-                                                sessionStorage.setItem('projectid', id)
-                                                sessionStorage.setItem('projectname', params.row.proname)
-                                                sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
-                                                window.location.pathname = 'board.html'
-                                            }
-                                        }
-                                    }, '质量看板')
-                                ]);
-                            } else {
-                                if (params.row.isWrite === 1) {
+                                if (params.row.state == 1) {
                                     return h('div', [
                                         h('Button', {
                                             props: {
@@ -767,6 +734,156 @@
                                             }
                                         }, '质量看板')
                                     ]);
+                                } else {
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px',
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'checkreport.html'
+                                                }
+                                            }
+                                        }, '查看日报'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                fontSize: '12px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let that = this
+                                                    let id = params.row.projectid
+                                                    sessionStorage.setItem('projectid', id)
+                                                    sessionStorage.setItem('projectname', params.row.proname)
+                                                    sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                    window.location.pathname = 'board.html'
+                                                }
+                                            }
+                                        }, '质量看板')
+                                    ]);
+                                }
+                            } else {
+                                if (params.row.isWrite === 1) {
+                                    if (params.row.state == 1) {
+                                        return h('div', [
+                                            h('Button', {
+                                                props: {
+                                                    type: 'primary',
+                                                    size: 'small'
+                                                },
+                                                style: {
+                                                    marginRight: '5px',
+                                                    fontSize: '12px'
+                                                },
+                                                on: {
+                                                    click: () => {
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        sessionStorage.setItem('projectid', id)
+                                                        sessionStorage.setItem('projectname', params.row.proname)
+                                                        sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                        window.location.pathname = 'report.html'
+                                                    }
+                                                }
+                                            }, '填写日报'),
+                                            h('Button', {
+                                                props: {
+                                                    type: 'primary',
+                                                    size: 'small'
+                                                },
+                                                style: {
+                                                    marginRight: '5px',
+                                                    fontSize: '12px'
+                                                },
+                                                on: {
+                                                    click: () => {
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        sessionStorage.setItem('projectid', id)
+                                                        sessionStorage.setItem('projectname', params.row.proname)
+                                                        sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                        window.location.pathname = 'checkreport.html'
+                                                    }
+                                                }
+                                            }, '查看日报'),
+                                            h('Button', {
+                                                props: {
+                                                    type: 'primary',
+                                                    size: 'small'
+                                                },
+                                                style: {
+                                                    fontSize: '12px'
+                                                },
+                                                on: {
+                                                    click: () => {
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        sessionStorage.setItem('projectid', id)
+                                                        sessionStorage.setItem('projectname', params.row.proname)
+                                                        sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                        window.location.pathname = 'board.html'
+                                                    }
+                                                }
+                                            }, '质量看板')
+                                        ]);
+                                    } else {
+                                        return h('div', [
+                                            h('Button', {
+                                                props: {
+                                                    type: 'primary',
+                                                    size: 'small'
+                                                },
+                                                style: {
+                                                    marginRight: '5px',
+                                                    fontSize: '12px'
+                                                },
+                                                on: {
+                                                    click: () => {
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        sessionStorage.setItem('projectid', id)
+                                                        sessionStorage.setItem('projectname', params.row.proname)
+                                                        sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                        window.location.pathname = 'checkreport.html'
+                                                    }
+                                                }
+                                            }, '查看日报'),
+                                            h('Button', {
+                                                props: {
+                                                    type: 'primary',
+                                                    size: 'small'
+                                                },
+                                                style: {
+                                                    fontSize: '12px'
+                                                },
+                                                on: {
+                                                    click: () => {
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        sessionStorage.setItem('projectid', id)
+                                                        sessionStorage.setItem('projectname', params.row.proname)
+                                                        sessionStorage.setItem('lastprojectlist', JSON.stringify(that.projectList))
+                                                        window.location.pathname = 'board.html'
+                                                    }
+                                                }
+                                            }, '质量看板')
+                                        ]);
+                                    }
                                 } else if (params.row.isWrite === 0) {
                                     return h('div', [
                                         h('Button', {
@@ -811,6 +928,341 @@
                                     ]);
                                 }
                             }
+                        }
+                    },
+                    {
+                        title: '操作',
+                        key: 'actionproject',
+                        align: 'center',
+                        width: 100,
+                        render: (h, params) => {
+                            let authorityid = sessionStorage.getItem('authorityid')
+                            if (authorityid === '1') {
+                                if (params.row.state == 3) {
+                                    return h('div', [
+                                        h('span', [
+                                            h('Poptip', {
+                                                props: {
+                                                    confirm: true,
+                                                    transfer: true,
+                                                    placement: 'left-start',
+                                                    title: '确定要恢复该项目吗？',
+                                                    type: 'error',
+                                                    size: 'small',
+                                                    width: '300',
+                                                    vModel: true
+                                                },
+                                                on: {
+                                                    'on-ok': ()=>{
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        that.recoverProject(id)
+                                                    },
+                                                    'on-cancel': ()=>{
+                                                        this.$Message.info('点击了取消')
+                                                    }
+                                                }
+                                            }, [
+                                                h('Icon',{
+                                                    props: {
+                                                        type: 'refresh'
+                                                    },
+                                                    style: {
+                                                        fontSize: '18px',
+                                                        cursor: 'pointer'
+                                                    },
+                                                    attrs: {
+                                                        title: '恢复项目'
+                                                    }
+                                                })
+                                            ])
+                                        ]),
+                                        h('span', [
+                                            h('Poptip', {
+                                                props: {
+                                                    confirm: true,
+                                                    transfer: true,
+                                                    placement: 'left-start',
+                                                    title: '完成将无法恢复，确定该项目已经完成？',
+                                                    type: 'error',
+                                                    size: 'small',
+                                                    width: '300',
+                                                    vModel: true
+                                                },
+                                                on: {
+                                                    'on-ok': ()=>{
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        that.finishProject(id)
+                                                    },
+                                                    'on-cancel': ()=>{
+                                                        this.$Message.info('点击了取消')
+                                                    }
+                                                }
+                                            }, [
+                                                h('Icon',{
+                                                    props: {
+                                                        type: 'checkmark-round'
+                                                    },
+                                                    style: {
+                                                        fontSize: '18px',
+                                                        cursor: 'pointer',
+                                                        marginLeft: '10px'
+                                                    },
+                                                    attrs: {
+                                                        title: '完成项目'
+                                                    }
+                                                })
+                                            ])
+                                        ]),
+                                    ]);
+                                } else if (params.row.state == 1) {
+                                    return h('div', [
+                                        h('span', [
+                                            h('Poptip', {
+                                                props: {
+                                                    confirm: true,
+                                                    transfer: true,
+                                                    placement: 'left-start',
+                                                    title: '确定要暂停该项目吗？',
+                                                    type: 'error',
+                                                    size: 'small',
+                                                    width: '300',
+                                                    vModel: true
+                                                },
+                                                on: {
+                                                    'on-ok': ()=>{
+                                                        console.log("111")
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        that.pauseProject(id)
+                                                    },
+                                                    'on-cancel': ()=>{
+                                                        this.$Message.info('点击了取消')
+                                                    }
+                                                }
+                                            }, [
+                                                h('Icon',{
+                                                    props: {
+                                                        type: 'arrow-right-b'
+                                                    },
+                                                    style: {
+                                                        fontSize: '18px',
+                                                        cursor: 'pointer'
+                                                    },
+                                                    attrs: {
+                                                        title: '暂停项目'
+                                                    }
+                                                })
+                                            ])
+                                        ]),
+                                        h('span', [
+                                            h('Poptip', {
+                                                props: {
+                                                    confirm: true,
+                                                    transfer: true,
+                                                    placement: 'left-start',
+                                                    title: '完成将无法恢复，确定该项目已经完成？',
+                                                    type: 'error',
+                                                    size: 'small',
+                                                    width: '300',
+                                                    vModel: true
+                                                },
+                                                on: {
+                                                    'on-ok': ()=>{
+                                                        let that = this
+                                                        let id = params.row.projectid
+                                                        that.finishProject(id)
+                                                    },
+                                                    'on-cancel': ()=>{
+                                                        this.$Message.info('点击了取消')
+                                                    }
+                                                }
+                                            }, [
+                                                h('Icon',{
+                                                    props: {
+                                                        type: 'checkmark-round'
+                                                    },
+                                                    style: {
+                                                        fontSize: '18px',
+                                                        cursor: 'pointer',
+                                                        marginLeft: '10px'
+                                                    },
+                                                    attrs: {
+                                                        title: '完成项目'
+                                                    }
+                                                })
+                                            ])
+                                        ]),
+                                    ]);
+                                }
+                            } else {
+                                if (params.row.isWrite === 1) {
+                                    if (params.row.state == 3) {
+                                        return h('div', [
+                                            h('span', [
+                                                h('Poptip', {
+                                                    props: {
+                                                        confirm: true,
+                                                        transfer: true,
+                                                        placement: 'left-start',
+                                                        title: '确定要恢复该项目吗？',
+                                                        type: 'error',
+                                                        size: 'small',
+                                                        width: '300',
+                                                        vModel: true
+                                                    },
+                                                    on: {
+                                                        'on-ok': ()=>{
+                                                            let that = this
+                                                            let id = params.row.projectid
+                                                            that.recoverProject(id)
+                                                        },
+                                                        'on-cancel': ()=>{
+                                                            this.$Message.info('点击了取消')
+                                                        }
+                                                    }
+                                                }, [
+                                                    h('Icon',{
+                                                        props: {
+                                                            type: 'refresh'
+                                                        },
+                                                        style: {
+                                                            fontSize: '18px',
+                                                            cursor: 'pointer'
+                                                        },
+                                                        attrs: {
+                                                            title: '恢复项目'
+                                                        }
+                                                    })
+                                                ])
+                                            ]),
+                                            h('span', [
+                                                h('Poptip', {
+                                                    props: {
+                                                        confirm: true,
+                                                        transfer: true,
+                                                        placement: 'left-start',
+                                                        title: '完成将无法恢复，确定该项目已经完成？',
+                                                        type: 'error',
+                                                        size: 'small',
+                                                        width: '300',
+                                                        vModel: true
+                                                    },
+                                                    on: {
+                                                        'on-ok': ()=>{
+                                                            let that = this
+                                                            let id = params.row.projectid
+                                                            that.finishProject(id)
+                                                        },
+                                                        'on-cancel': ()=>{
+                                                            this.$Message.info('点击了取消')
+                                                        }
+                                                    }
+                                                }, [
+                                                    h('Icon',{
+                                                        props: {
+                                                            type: 'checkmark-round'
+                                                        },
+                                                        style: {
+                                                            fontSize: '18px',
+                                                            cursor: 'pointer',
+                                                            marginLeft: '10px'
+                                                        },
+                                                        attrs: {
+                                                            title: '完成项目'
+                                                        }
+                                                    })
+                                                ])
+                                            ]),
+                                        ]);
+                                    } else if (params.row.state == 1) {
+                                        return h('div', [
+                                            h('span', [
+                                                h('Poptip', {
+                                                    props: {
+                                                        confirm: true,
+                                                        transfer: true,
+                                                        placement: 'left-start',
+                                                        title: '确定要暂停该项目吗？',
+                                                        type: 'error',
+                                                        size: 'small',
+                                                        width: '300',
+                                                        vModel: true
+                                                    },
+                                                    on: {
+                                                        'on-ok': ()=>{
+                                                            console.log("111")
+                                                            let that = this
+                                                            let id = params.row.projectid
+                                                            that.pauseProject(id)
+                                                        },
+                                                        'on-cancel': ()=>{
+                                                            this.$Message.info('点击了取消')
+                                                        }
+                                                    }
+                                                }, [
+                                                    h('Icon',{
+                                                        props: {
+                                                            type: 'arrow-right-b'
+                                                        },
+                                                        style: {
+                                                            fontSize: '18px',
+                                                            cursor: 'pointer'
+                                                        },
+                                                        attrs: {
+                                                            title: '暂停项目'
+                                                        }
+                                                    })
+                                                ])
+                                            ]),
+                                            h('span', [
+                                                h('Poptip', {
+                                                    props: {
+                                                        confirm: true,
+                                                        transfer: true,
+                                                        placement: 'left-start',
+                                                        title: '完成将无法恢复，确定该项目已经完成？',
+                                                        type: 'error',
+                                                        size: 'small',
+                                                        width: '300',
+                                                        vModel: true
+                                                    },
+                                                    on: {
+                                                        'on-ok': ()=>{
+                                                            let that = this
+                                                            let id = params.row.projectid
+                                                            that.finishProject(id)
+                                                        },
+                                                        'on-cancel': ()=>{
+                                                            this.$Message.info('点击了取消')
+                                                        }
+                                                    }
+                                                }, [
+                                                    h('Icon',{
+                                                        props: {
+                                                            type: 'checkmark-round'
+                                                        },
+                                                        style: {
+                                                            fontSize: '18px',
+                                                            cursor: 'pointer',
+                                                            marginLeft: '10px'
+                                                        },
+                                                        attrs: {
+                                                            title: '完成项目'
+                                                        }
+                                                    })
+                                                ])
+                                            ]),
+                                        ]);
+                                    }
+                                } else {
+                                    return h('div', [
+                                        h('span', {
+                                        }, '暂无权限')
+                                    ]);
+                                }
+                            } 
                         }
                     }
                 ],
@@ -919,6 +1371,108 @@
             });
         },
         methods: {
+            finishProject(id) {
+                let params = {
+                    id: id,
+                    state: 2
+                }
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/project/updateProject.do',
+                        data: JSON.stringify(params),
+                        contentType: 'text/plain',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        that.changePage(1)
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                });
+            },
+            recoverProject(id) {
+                let params = {
+                    id: id,
+                    state: 1
+                }
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/project/updateProject.do',
+                        data: JSON.stringify(params),
+                        contentType: 'text/plain',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        that.changePage(1)
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                });
+            },
+            pauseProject(id) {
+                let params = {
+                    id: id,
+                    state: 3
+                }
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/project/updateProject.do',
+                        data: JSON.stringify(params),
+                        contentType: 'text/plain',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        that.changePage(1)
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                });
+            },
             getPMISProject() {
                 var promis = new Promise(function (resolve, reject) {
                     $.ajax({
@@ -1600,7 +2154,8 @@
                                     tester: '',
                                     projectid: '',
                                     isWrite: '',
-                                    isDev: ''
+                                    isDev: '',
+                                    state: ''
                                 }
                                 for (let j = 0; j < that.grouplistid.length; j++) {
                                     if (data.data.list[i].groupId === that.grouplistid[j].id) {
@@ -1617,6 +2172,7 @@
                                 datalist.projectid = data.data.list[i].id
                                 datalist.isWrite = data.data.list[i].isWrite
                                 datalist.isDev = data.data.list[i].isDev
+                                datalist.state = data.data.list[i].state
 
                                 that.data0.push(datalist)
                             }

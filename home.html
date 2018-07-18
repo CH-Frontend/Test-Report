@@ -6,6 +6,7 @@
 <!--[if !IE]><!-->
 <html lang="en"> <!--<![endif]-->
 <head>
+    <meta content="webkit" name="renderer" />
     <title>测试日报质量平台</title>
 
     <!-- Meta -->
@@ -196,7 +197,8 @@
         el: '#app',
         data: {},
         methods: {
-            toLogin() {
+            toLogin () {
+                console.log("login")
                 window.location.pathname = 'login.html'
             }
         }

@@ -6,6 +6,7 @@
 <!--[if !IE]><!-->
 <html lang="en"> <!--<![endif]-->
 <head>
+    <meta content="webkit" name="renderer" />
     <title>日报</title>
 
     <!-- Meta -->
@@ -73,7 +74,16 @@
         <div style="background-color: rgba(242, 242, 242, 1);">
             <div style="padding-top: 15px;padding-bottom: 15px;margin-left: 10%;font-size: 14px;">
                 <span>项目测试结论：<i-button style="width:100px;">{{Testresult}}</i-button><label
-                        style="font-weight: normal;margin-left: 10%;">项目当前风险及障碍：{{alldata.projectJournal.description}}</label></span>
+                        style="font-weight: normal;margin-left: 10%;">项目当前风险及障碍：{{alldata.projectJournal.description}}</label>
+                        <i-button
+                            type="primary"
+                            style="margin-left: 20px;"
+                            @click="checkNotCloseRisk">未关闭风险及障碍列表</i-button>
+                        <i-button
+                            type="primary"
+                            style="margin-left: 20px;"
+                            @click="checkCloseRisk">已关闭风险及障碍列表</i-button>
+                </span>
             </div>
         </div>
         <div style="width: 80%;margin-left: 10%;" v-show="isFunction">
@@ -378,6 +388,28 @@
                 @on-cancel="cancel">
             <p>您可能有数据没有保存，确认退出吗？</p>
         </Modal>
+        <Modal
+            v-model="modal6"
+            title="未关闭风险及障碍列表"
+            width="800px"
+            @on-ok="ok6"
+            @on-cancel="cancel6">
+            <i-table :columns="notriskcolumns" :data="notriskdata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel6">关闭</i-button>
+            </div>
+        </Modal>
+        <Modal
+            v-model="modal7"
+            title="已关闭风险及障碍列表"
+            width="800px"
+            @on-ok="ok7"
+            @on-cancel="cancel7">
+            <i-table :columns="riskcolumns" :data="riskdata"></i-table>
+            <div slot="footer">
+                <i-button type="primary" @click="cancel7">关闭</i-button>
+            </div>
+        </Modal>
     </div>
 </div>
 <script type="text/javascript" src="assets/js/vue.js"></script>
@@ -389,6 +421,8 @@
     new Vue({
         el: '#app',
         data: {
+            modal6: false,
+            modal7: false,
             functiondisabled0: true,
             functiondisabled1: true,
             functiondisabled2: true,
@@ -426,7 +460,77 @@
             conclusion1: '',
             conclusion2: '',
             conclusion3: '',
-            alldata: {}
+            alldata: {},
+            notriskcolumns: [
+                {
+                    title: '风险及障碍描述',
+                    key: 'description',
+                    align: 'center',
+                    width: 400
+                },
+                {
+                    title: '状态',
+                    key: 'desState',
+                    align: 'center',
+                    render: (h, params) => {
+                        let that = this
+                        if (params.row.desState == 1) {
+                            return h('span', {
+                                style: {
+                                    fontWeight: 500
+                                },
+                            }, '开启')
+                        } else if (params.row.desState == 0) {
+                            return h('span', {
+                                style: {
+                                    fontWeight: 500
+                                },
+                            }, '关闭')
+                        }
+                    }
+                },
+                {
+                    title: '创建时间',
+                    key: 'cTime',
+                    align: 'center'
+                }
+            ],
+            notriskdata: [],
+            riskcolumns: [
+                {
+                    title: '风险及障碍描述',
+                    key: 'description',
+                    align: 'center',
+                    width: 400
+                },
+                {
+                    title: '状态',
+                    key: 'desState',
+                    align: 'center',
+                    render: (h, params) => {
+                        let that = this
+                        if (params.row.desState == 1) {
+                            return h('span', {
+                                style: {
+                                    fontWeight: 500
+                                },
+                            }, '开启')
+                        } else if (params.row.desState == 0) {
+                            return h('span', {
+                                style: {
+                                    fontWeight: 500
+                                },
+                            }, '关闭')
+                        }
+                    }
+                },
+                {
+                    title: '创建时间',
+                    key: 'cTime',
+                    align: 'center'
+                }
+            ],
+            riskdata: []
         },
         mounted() {
             this.userName = sessionStorage.getItem('userName')
@@ -529,6 +633,82 @@
             })
         },
         methods: {
+            checkNotCloseRisk() {
+                this.notriskdata = []
+                var projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/journal/descriptionRunList.do',
+                        data: projectId,
+                        contentType: 'application/x-www-form-urlencoded',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        for (let i = 0; i < data.data.length; i++) {
+                            let NotClosedatalist = data.data[i]
+                            NotClosedatalist.cTime = that.timestampToTime1(data.data[i].cTime)
+                            that.notriskdata.push(NotClosedatalist)
+                        }
+                        if (!that.modal6){
+                            that.modal6 = true
+                        }
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                });
+            },
+            checkCloseRisk() {
+                this.riskdata = []
+                var projectId = 'projectId=' + sessionStorage.getItem('projectid')
+                var promis = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/PTJ/journal/descriptionClosedList.do',
+                        data: projectId,
+                        contentType: 'application/x-www-form-urlencoded',
+                        success: (data) => {
+                            resolve(data)
+                        },
+                        error: (err) => {
+                            reject(err)
+                        }
+                    })
+                })
+                let that = this
+                promis.then(function (data) {
+                    if (data.status === 0) {
+                        for (let i = 0; i < data.data.length; i++) {
+                            let Closedatalist = data.data[i]
+                            Closedatalist.cTime = that.timestampToTime1(data.data[i].cTime)
+                            that.riskdata.push(Closedatalist)
+                        }
+                        that.modal7 = true
+                    } else if (data.status === 10) {
+                        that.$Notice.warning({
+                            title: '登录超时',
+                            desc: '用户登录超时，即将跳转到登录页面'
+                        })
+                        setTimeout(that.userout(), 5000)
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                });
+            },
             ChangeDate(date) {
                 this.searchDate1 = date
             },
@@ -676,6 +856,18 @@
             },
             cancel() {
                 // this.$Message.info('Clicked cancel')
+            },
+            ok6() {
+                this.modal6 = false
+            },
+            cancel6() {
+                this.modal6 = false
+            },
+            ok7() {
+                this.modal7 = false
+            },
+            cancel7() {
+                this.modal7 = false
             },
             goBack() {
                 window.location.pathname = 'index.html'
