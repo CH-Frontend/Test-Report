@@ -506,6 +506,8 @@
             @on-ok="ok6"
             @on-cancel="cancel6">
             <i-table :columns="notriskcolumns" :data="notriskdata"></i-table>
+            <div id="Bar1" style="margin-top: 10px;width: 750px;height:300px;">
+			</div>
             <div slot="footer">
                 <i-button type="primary" @click="cancel6">关闭</i-button>
             </div>
@@ -517,6 +519,8 @@
             @on-ok="ok7"
             @on-cancel="cancel7">
             <i-table :columns="riskcolumns" :data="riskdata"></i-table>
+            <div id="Bar2" style="margin-top: 10px;width: 750px;height:300px;">
+			</div>
             <div slot="footer">
                 <i-button type="primary" @click="cancel7">关闭</i-button>
             </div>
@@ -528,6 +532,7 @@
 <script type="text/javascript" src="assets/plugins/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="assets/plugins/jquery/jquery-migrate.min.js"></script>
 <script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/plugins/echarts/echarts.js"></script>
 <script type="text/javascript">
     var vm = new Vue({
         el: '#app',
@@ -822,7 +827,8 @@
                     align: 'center'
                 }
             ],
-            riskdata: []
+            riskdata: [],
+            barseries: []
         },
         mounted() {
             this.userName = sessionStorage.getItem('userName')
@@ -834,6 +840,80 @@
             this.searchDate1 = timestamp
         },
         methods: {
+            barcode () {
+                let id = sessionStorage.getItem('projectid')
+                let projectId = 'projectId=' + id
+                let that = this
+                    $.ajax({
+                    type: 'POST',
+                    url: '/api/PTJ/journal/statisticsDesState.do',
+                    data: projectId,
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function(data){
+                        if (data.status === 0) {
+                            that.barseries.push(data.data.runDesSUM)
+                            that.barseries.push(data.data.closedDesSUM)
+                            that.$nextTick(function() {
+                                that.drawbar('Bar1')
+                                that.drawbar('Bar2')
+                            })
+                        }
+                    },
+                    error: function(){
+                        console.log('error')
+                    }
+                })
+            },
+            drawbar(id){
+                this.charts = echarts.init(document.getElementById(id))
+                this.charts.setOption({
+                    title : {
+                    text: '风险及障碍状态图',
+                    x:'center',
+                    textStyle: {
+                        fontSize: 15
+                    }
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '6%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data:["未关闭风险及障碍", "已关闭风险及障碍"]
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [{
+                        data: this.barseries,
+                        type: 'bar',
+                        barWidth : 30,
+                        itemStyle: {   
+                            //通常情况下：
+                            normal:{  
+            　　　　　　　　　　　　//每个柱子的颜色即为colorList数组里的每一项，如果柱子数目多于colorList的长度，则柱子颜色循环使用该数组
+                                color: function (params){
+                                    var colorList = ['#CD2626','#3CB371'];
+                                    return colorList[params.dataIndex];
+                                }
+                            }
+                        },
+                    }]
+                })
+            },
             checkNotCloseRisk() {
                 this.notriskdata = []
                 var projectId = 'projectId=' + sessionStorage.getItem('projectid')
@@ -862,6 +942,7 @@
                         if (!that.modal6){
                             that.modal6 = true
                         }
+                        that.barcode()
                     } else if (data.status === 10) {
                         that.$Notice.warning({
                             title: '登录超时',

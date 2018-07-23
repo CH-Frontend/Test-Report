@@ -225,7 +225,7 @@
             width="600"
             :mask-closable="false"
             @on-cancel="cancel2">
-        <i-form ref="formValidate" :label-width="90" :model="newProjectFormDic" :rules="ruleValidate"
+        <i-form ref="formValidate" :label-width="100" :model="newProjectFormDic" :rules="ruleValidate"
                 label-position="right">
             <form-item label="项目名称" prop="projectName">
                 <i-input style="width: 400px" v-model="newProjectFormDic.projectName"></i-input>
@@ -247,6 +247,14 @@
             </form-item>
             <form-item label="参与人员" prop="members">
                 <i-input style="width: 400px" placeholder="多个参与人员请用逗号分隔" v-model="newProjectFormDic.members"></i-input>
+            </form-item>
+            <form-item label="测试完成时间" prop="stEndTime">
+                <date-picker v-model="newProjectFormDic.stEndTime" type="date" @on-change="stChangeDate"
+                             placeholder="请选择日期" style="width: 200px"></date-picker>
+            </form-item>
+            <form-item label="项目结项时间" prop="prjEndTime">
+                <date-picker v-model="newProjectFormDic.prjEndTime" type="date" @on-change="prjChangeDate"
+                             placeholder="请选择日期" style="width: 200px"></date-picker>
             </form-item>
         </i-form>
         <div slot="footer">
@@ -307,7 +315,9 @@
                     projectManager: '',
                     testType: [],
                     tester: '',
-                    members: ''
+                    members: '',
+                    stEndTime: '',
+                    prjEndTime: ''
                 },
                 ruleValidate: {
                     projectName: [
@@ -324,6 +334,12 @@
                     ],
                     members: [
                         {required: true, message: '参与人员不能为空', trigger: 'blur'}
+                    ],
+                    stEndTime: [
+                        {required: true, message: '测试完成时间不能为空', trigger: 'change'}
+                    ],
+                    prjEndTime: [
+                        {required: true, message: '项目结项时间不能为空', trigger: 'change'}
                     ]
                 },
                 testApplyList: [],
@@ -1697,6 +1713,13 @@
                 this.searchTime.end = this.searchTime.detail[1]
                 sessionStorage.setItem('listdefineTime', daterange)
             },
+            stChangeDate(date) {
+                this.newProjectFormDic.stEndTime = date
+            },
+            prjChangeDate(date) {
+                this.newProjectFormDic.prjEndTime = date
+                console.log(this.newProjectFormDic.prjEndTime)
+            },
             confirmDate() {
                 this.changePage(1)
                 this.getitemlist(1)
@@ -1722,6 +1745,8 @@
                             testId: this.newProjectFormDic.tester,
                             projectName: this.newProjectFormDic.projectName,
                             members: this.newProjectFormDic.members,
+                            stEndTime: this.newProjectFormDic.stEndTime,
+                            prjEndTime: this.newProjectFormDic.prjEndTime,
                             isFunction: this.isFunction,
                             isProperty: this.isProperty,
                             isCode: this.isCode,
