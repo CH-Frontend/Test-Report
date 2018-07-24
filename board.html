@@ -226,12 +226,64 @@
 	        {
 	            name:'累计发现bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF7F00',
+								width: 2,
+							},
+							label: {
+								formatter: '测试end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end',
+							},
+						},
+                	}
+				}
 	        },
 	        {
 	            name:'累计遗留bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF0000',
+								width: 2,
+							},
+							label: {
+								formatter: '项目end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end'
+							}
+						},
+                	}
+				}
 	        }
 	     ],
 	    opinionright5: [],
@@ -239,12 +291,64 @@
 	        {
 	            name:'累计发现bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF7F00',
+								width: 2,
+							},
+							label: {
+								formatter: '测试end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end',
+							},
+						},
+                	}
+				}
 	        },
 	        {
 	            name:'累计遗留bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF0000',
+								width: 2,
+							},
+							label: {
+								formatter: '项目end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end'
+							}
+						},
+                	}
+				}
 	        }
 	     ],
 	    opinionright6: [],
@@ -252,12 +356,64 @@
 	        {
 	            name:'达标率',
 	            type:'line',
-	            data:''
+	            data:'',
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF7F00',
+								width: 2,
+							},
+							label: {
+								formatter: '测试end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end',
+							},
+						},
+                	}
+				}
 	        },
 	        {
 	            name:'不达标数',
 	            type:'line',
-	            data:''
+	            data:'',
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF0000',
+								width: 2,
+							},
+							label: {
+								formatter: '项目end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end'
+							}
+						},
+                	}
+				}
 	        }
 	     ],
 	    opinionright7: [],
@@ -265,12 +421,64 @@
 	        {
 	            name:'累计发现bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF7F00',
+								width: 2,
+							},
+							label: {
+								formatter: '测试end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end',
+							},
+						},
+                	}
+				}
 	        },
 	        {
 	            name:'累计遗留bug数',
 	            type:'line',
-	            data:[]
+	            data:[],
+				markLine: {
+					data:[
+						[
+							{coord:[]},
+							{coord:[]}
+						]
+					],
+					itemStyle: {
+						normal: {
+							borderWidth: 1,
+							lineStyle: {
+								type: 'solid',
+								color: '#FF0000',
+								width: 2,
+							},
+							label: {
+								formatter: '项目end',
+								textStyle: {
+									fontSize: 10,
+									color: '#000'
+								},
+								position: 'end'
+							}
+						},
+                	}
+				}
 	        }
 	     ],
 	     bardata0: [],
@@ -312,7 +520,9 @@
             bugHRemain: null,
             bugMRemain: null,
             bugLRemain: null
-	     }
+	     },
+		 prjEndTime: '',
+		 stEndTime: ''
 	  },
 	  mounted () {
 	  	this.userName = sessionStorage.getItem('userName')
@@ -332,6 +542,8 @@
 		  contentType: 'text/plain',
 		  success: function(data){
                if (data.status === 0) {
+				   	that.stEndTime = that.timestampToTime(data.data.stEndTime)
+					that.prjEndTime = that.timestampToTime(data.data.prjEndTime)
                	    that.prorisk = data.data.projectJournal.description
 	               	if (data.data.state === 1) {
 	               		that.Testresult = '测试执行'
@@ -424,6 +636,13 @@
 		})
 	  },
 	  methods: {
+		timestampToTime(timestamp) {
+			let date = new Date(timestamp)
+			Y = date.getFullYear()
+			M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
+			D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate())
+			return Y + M + D
+		},
 	  	barfunction () {
 	  	   let id = sessionStorage.getItem('projectid')
            let projectId = 'projectId=' + id
@@ -546,6 +765,18 @@
 	               	  that.opinionright4 = data.data.times
                       that.opinionDataright4[0].data = data.data.sums
                       that.opinionDataright4[1].data = data.data.remains
+					  that.opinionright4.push(that.stEndTime)
+					  that.opinionright4.push(that.prjEndTime)
+					  let numberSum = data.data.sums.concat(data.data.remains)
+					  let max = Math.max.apply(null, numberSum)
+					  that.opinionDataright4[0].markLine.data[0][0].coord[0] = that.stEndTime
+					  that.opinionDataright4[0].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright4[0].markLine.data[0][1].coord[0] = that.stEndTime
+					  that.opinionDataright4[0].markLine.data[0][1].coord[1] = max-1
+					  that.opinionDataright4[1].markLine.data[0][0].coord[0] = that.prjEndTime
+					  that.opinionDataright4[1].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright4[1].markLine.data[0][1].coord[0] = that.prjEndTime
+					  that.opinionDataright4[1].markLine.data[0][1].coord[1] = max-1
                       that.$nextTick(function() {
 			            that.drawLine0('right4')
 			          })
@@ -574,6 +805,18 @@
                      that.opinionright5 = data.data.times
                      that.opinionDataright5[0].data = data.data.sums
                      that.opinionDataright5[1].data = data.data.remains
+					 that.opinionright5.push(that.stEndTime)
+					 that.opinionright5.push(that.prjEndTime)
+					 let numberSum = data.data.sums.concat(data.data.remains)
+					 let max = Math.max.apply(null, numberSum)
+					 that.opinionDataright5[0].markLine.data[0][0].coord[0] = that.stEndTime
+					 that.opinionDataright5[0].markLine.data[0][0].coord[1] = 0
+					 that.opinionDataright5[0].markLine.data[0][1].coord[0] = that.stEndTime
+					 that.opinionDataright5[0].markLine.data[0][1].coord[1] = max-1
+					 that.opinionDataright5[1].markLine.data[0][0].coord[0] = that.prjEndTime
+					 that.opinionDataright5[1].markLine.data[0][0].coord[1] = 0
+					 that.opinionDataright5[1].markLine.data[0][1].coord[0] = that.prjEndTime
+					 that.opinionDataright5[1].markLine.data[0][1].coord[1] = max-1
                      that.$nextTick(function() {
 			            that.drawLine1('right5')
 			        })
@@ -602,6 +845,18 @@
                      that.opinionright6 = data.data.times
                      that.opinionDataright6[0].data = data.data.passRate
                      that.opinionDataright6[1].data = data.data.failNums
+					 that.opinionright6.push(that.stEndTime)
+					  that.opinionright6.push(that.prjEndTime)
+					  let numberSum = data.data.passRate.concat(data.data.failNums)
+					  let max = Math.max.apply(null, numberSum)
+					  that.opinionDataright6[0].markLine.data[0][0].coord[0] = that.stEndTime
+					  that.opinionDataright6[0].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright6[0].markLine.data[0][1].coord[0] = that.stEndTime
+					  that.opinionDataright6[0].markLine.data[0][1].coord[1] = max-1
+					  that.opinionDataright6[1].markLine.data[0][0].coord[0] = that.prjEndTime
+					  that.opinionDataright6[1].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright6[1].markLine.data[0][1].coord[0] = that.prjEndTime
+					  that.opinionDataright6[1].markLine.data[0][1].coord[1] = max-1
                      that.$nextTick(function() {
 			            that.drawLine2('right6')
 			        })
@@ -630,6 +885,18 @@
                      that.opinionright7 = data.data.times
                      that.opinionDataright7[0].data = data.data.sums
                      that.opinionDataright7[1].data = data.data.remains
+					 that.opinionright7.push(that.stEndTime)
+					  that.opinionright7.push(that.prjEndTime)
+					  let numberSum = data.data.sums.concat(data.data.remains)
+					  let max = Math.max.apply(null, numberSum)
+					  that.opinionDataright7[0].markLine.data[0][0].coord[0] = that.stEndTime
+					  that.opinionDataright7[0].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright7[0].markLine.data[0][1].coord[0] = that.stEndTime
+					  that.opinionDataright7[0].markLine.data[0][1].coord[1] = max-1
+					  that.opinionDataright7[1].markLine.data[0][0].coord[0] = that.prjEndTime
+					  that.opinionDataright7[1].markLine.data[0][0].coord[1] = 0
+					  that.opinionDataright7[1].markLine.data[0][1].coord[0] = that.prjEndTime
+					  that.opinionDataright7[1].markLine.data[0][1].coord[1] = max-1
                      that.$nextTick(function() {
 			            that.drawLine3('right7')
 			        })
@@ -1212,7 +1479,11 @@
 		     xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-		        data: this.opinionright4
+		        data: this.opinionright4,
+				axisLabel: {
+					interval: 0,
+					fontSize: 8
+				}
 		     },
 		     yAxis: {
 		        type: 'value'
@@ -1246,7 +1517,11 @@
 		     xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-		        data: this.opinionright5
+		        data: this.opinionright5,
+				axisLabel: {
+					interval: 0,
+					fontSize: 8
+				}
 		     },
 		     yAxis: {
 		        type: 'value'
@@ -1283,7 +1558,11 @@
 		     xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-		        data: this.opinionright6
+		        data: this.opinionright6,
+				axisLabel: {
+					interval: 0,
+					fontSize: 8
+				}
 		     },
 		     yAxis: {
 		        type: 'value'
@@ -1317,7 +1596,11 @@
 		     xAxis: {
 		        type: 'category',
 		        boundaryGap: false,
-		        data: this.opinionright7
+		        data: this.opinionright7,
+				axisLabel: {
+					interval: 0,
+					fontSize: 8
+				}
 		     },
 		     yAxis: {
 		        type: 'value'
