@@ -50,10 +50,17 @@
             </div>
         </div><!--/breadcrumbs-->
         <!--=== End Breadcrumbs ===-->
-        <div style="background-color: rgba(242, 242, 242, 1);">
+        <div v-bind:class="warningClass" style="background-color: rgba(242, 242, 242, 1);">
             <div style="padding-top: 15px;padding-bottom: 15px;">
-                <span><i-button style="margin-left: 50px;" @click="goBack">返回</i-button><label
-                        style="font-size: 2em;margin-left: 28%;">{{proname}}项目日报</label></span>
+                <span><i-button style="margin-left: 50px;" @click="goBack">返回</i-button><label v-bind:class="warningClassText"
+                        style="font-size: 2em;margin-left: 28%;">{{proname}}项目日报</label>
+                        <span style="color: #fff;font-size: 18px;
+                            margin-left: 20px;font-weight: bold;">
+                            <span>
+                            <Icon v-show="warningInfo == '' ? false : true " type="alert-circled" style="margin-right: 5px"></Icon>{{warningInfo}}</span><span style="font-size: 30px;
+                            margin-left: 8px;
+                            margin-right: 5px;">{{warningDays}}</span><span>{{warningDay}}</span></span>
+                            </span>
             </div>
         </div>
         <div style="width: 80%;margin-left: 10%;">
@@ -426,6 +433,11 @@
     new Vue({
         el: '#app',
         data: {
+            warningClass: '',
+            warningClassText: '',
+            warningInfo: '',
+            warningDays: '',
+            warningDay: '',
             modal6: false,
             modal7: false,
             functiondisabled0: true,
@@ -559,6 +571,44 @@
                 contentType: 'text/plain',
                 success: function (data) {
                     if (data.status === 0) {
+                        if (data.data.state != 2) {
+                            let nowdate = new Date()
+                            let seperator = '-'
+                            let month = nowdate.getMonth() + 1
+                            let strDate = nowdate.getDate()
+                            if (month >= 1 && month <= 9) {
+                                month = '0' + month
+                            }
+                            if (strDate >= 0 && strDate <= 9) {
+                                strDate = '0' + strDate
+                            }
+                            let currentdate = nowdate.getFullYear() + seperator + month + seperator + strDate
+                            let stEndTime = that.timestampToTime1(data.data.stEndTime)
+                            let prjEndTime = that.timestampToTime1(data.data.prjEndTime)
+                            let stMinus = that.getDays(currentdate, stEndTime)
+                            let prjMinus = that.getDays(currentdate, prjEndTime)
+                            console.log(stMinus, prjMinus)
+                            if (stMinus <= 5) {
+                                that.warningClass = 'classOrange'
+                                that.warningClassText = 'classText'
+                                that.warningInfo = '距离测试完成仅剩'
+                                that.warningDays = stMinus
+                                that.warningDay = '天'
+                            }
+                            if (prjMinus <= 5) {
+                                that.warningClass = 'classRed'
+                                that.warningClassText = 'classText'
+                                that.warningInfo = '距离项目结项仅剩'
+                                that.warningDays = prjMinus
+                                that.warningDay = '天'
+                            }
+                        } else {
+                            that.warningClass = ''
+                            that.warningClassText = ''
+                            that.warningInfo = ''
+                            that.warningDays = ''
+                            that.warningDay = ''
+                        }
                         if (data.data.state === 1) {
                             that.Testresult = '测试执行'
                         } else if (data.data.state === 2) {
@@ -808,6 +858,44 @@
                     contentType: 'text/plain',
                     success: function (data) {
                         if (data.status === 0) {
+                            if (data.data.state != 2) {
+                                let nowdate = new Date()
+                                let seperator = '-'
+                                let month = nowdate.getMonth() + 1
+                                let strDate = nowdate.getDate()
+                                if (month >= 1 && month <= 9) {
+                                    month = '0' + month
+                                }
+                                if (strDate >= 0 && strDate <= 9) {
+                                    strDate = '0' + strDate
+                                }
+                                let currentdate = nowdate.getFullYear() + seperator + month + seperator + strDate
+                                let stEndTime = that.timestampToTime1(data.data.stEndTime)
+                                let prjEndTime = that.timestampToTime1(data.data.prjEndTime)
+                                let stMinus = that.getDays(currentdate, stEndTime)
+                                let prjMinus = that.getDays(currentdate, prjEndTime)
+                                console.log(stMinus, prjMinus)
+                                if (stMinus <= 5) {
+                                    that.warningClass = 'classOrange'
+                                    that.warningClassText = 'classText'
+                                    that.warningInfo = '距离测试完成仅剩'
+                                    that.warningDays = stMinus
+                                    that.warningDay = '天'
+                                }
+                                if (prjMinus <= 5) {
+                                    that.warningClass = 'classRed'
+                                    that.warningClassText = 'classText'
+                                    that.warningInfo = '距离项目结项仅剩'
+                                    that.warningDays = prjMinus
+                                    that.warningDay = '天'
+                                }
+                            } else {
+                                that.warningClass = ''
+                                that.warningClassText = ''
+                                that.warningInfo = ''
+                                that.warningDays = ''
+                                that.warningDay = ''
+                            }
                             if (data.data.state === 1) {
                                 that.Testresult = '测试执行'
                             } else if (data.data.state === 2) {
@@ -953,6 +1041,20 @@
             goBack() {
                 window.location.pathname = 'index.html'
             },
+            //获得两个日期之间相差的天数
+            getDays(date1 , date2){
+                var date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
+                //根据年 . 月 . 日的值创建Date对象
+                var date1Obj = new Date(date1Str[0],(date1Str[1]-1),date1Str[2]);
+                var date2Str = date2.split("-");
+                var date2Obj = new Date(date2Str[0],(date2Str[1]-1),date2Str[2]);
+                var t1 = date1Obj.getTime();
+                var t2 = date2Obj.getTime();
+                var dateTime = 1000*60*60*24; //每一天的毫秒数
+                var minusDays = Math.floor(((t2-t1)/dateTime));//计算出两个日期的天数差
+                var days = Math.abs(minusDays);//取绝对值
+                return days;
+            },
             userout: function () {
                 $.ajax({
                     type: 'POST',
@@ -981,5 +1083,16 @@
         }
     })
 </script>
+<style>
+    .classRed{
+        background-color: #FF0000 !important;
+    }
+    .classText{
+        color: #fff !important;
+    }
+    .classOrange{
+        background-color: #FF7F00 !important;
+    }
+</style>
 </body>
 </html>
